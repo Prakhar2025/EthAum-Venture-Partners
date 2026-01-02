@@ -146,7 +146,11 @@ To maintain speed and clarity, the MVP intentionally excludes:
 ---
 
 ## 📬 Contact
-Built for the EthAum AI MVP challenge.
+Built as part of the EthAum AI MVP challenge.
 
-For demos or collaboration:
-📧 pgupta@ethaum.com
+For demo, feedback, or collaboration:
+- Name: Prakhar Shukla
+- LinkedIn: https://www.linkedin.com/in/prakhar-shukla-471649261
+- GitHub: https://github.com/Prakhar2025
+- Email: prakhar230125@gmail.com
+
