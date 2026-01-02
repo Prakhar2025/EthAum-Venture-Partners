@@ -105,6 +105,7 @@ Figma Design:
 | `/api/v1/products/{id}/score` | GET | Trust score only |
 
 Swagger UI available at:
+`/docs` (when the backend is running locally or deployed)
 
 
 ---
