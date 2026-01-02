@@ -84,6 +84,17 @@ Signals Layer → Scoring Layer
 
 ---
 
+## 🎨 UI / Product Design
+The product interface was designed in Figma to reflect the core user journeys
+for founders, enterprises, and investors.
+
+The designs focus on clarity, trust signals, and explainable AI.
+
+Figma Design:
+👉 https://smooth-planet-44304520.figma.site/
+
+---
+
 ## 🔌 API Endpoints (MVP)
 
 | Endpoint | Method | Description |
