@@ -1,7 +1,23 @@
-# from sqlalchemy import Column, Integer, String
-# from db.base_class import Base
+"""EthAum AI - Product Schemas."""
 
-class Product:
-    # __tablename__ = "products"
-    # id = Column(Integer, primary_key=True, index=True)
-    pass
+from pydantic import BaseModel
+
+
+class ProductCreate(BaseModel):
+    """Schema for creating a new product submission."""
+
+    name: str
+    website: str
+    category: str
+    funding_stage: str
+
+
+class ProductResponse(BaseModel):
+    """Schema for product response with trust score."""
+
+    id: int
+    name: str
+    website: str
+    category: str
+    funding_stage: str
+    trust_score: int

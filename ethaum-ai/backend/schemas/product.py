@@ -1,15 +1,23 @@
+"""EthAum AI - Product Schemas."""
+
 from pydantic import BaseModel
 
-class ProductBase(BaseModel):
+
+class ProductCreate(BaseModel):
+    """Schema for creating a new product submission."""
+
     name: str
-    website_url: str
+    website: str
+    category: str
+    funding_stage: str
 
-class ProductCreate(ProductBase):
-    pass
 
-class Product(ProductBase):
+class ProductResponse(BaseModel):
+    """Schema for product response with trust score."""
+
     id: int
-    trust_score: float
-
-    class Config:
-        orm_mode = True
+    name: str
+    website: str
+    category: str
+    funding_stage: str
+    trust_score: int

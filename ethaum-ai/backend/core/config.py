@@ -1,5 +1,4 @@
-class Settings:
-    PROJECT_NAME: str = "EthAum AI"
-    VERSION: str = "0.1.0"
+"""EthAum AI - Application Configuration."""
 
-settings = Settings()
+PROJECT_NAME: str = "EthAum AI"
+API_VERSION: str = "v1"

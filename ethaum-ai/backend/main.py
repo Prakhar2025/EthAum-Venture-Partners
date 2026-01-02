@@ -1,11 +1,19 @@
+"""EthAum AI - FastAPI Application Entry Point."""
+
 from fastapi import FastAPI
+
 from routers import products
-from core.config import settings
 
-app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
+app = FastAPI(
+    title="EthAum AI",
+    description="AI-Powered SaaS Marketplace for Series A-D Startups",
+    version="0.1.0",
+)
 
-app.include_router(products.router, prefix="/api/v1/products", tags=["products"])
+app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to EthAum AI API", "docs": "/docs"}
+
+@app.get("/", tags=["Health"])
+def health_check() -> dict:
+    """Health check endpoint."""
+    return {"status": "ok", "service": "ethaum-ai"}
