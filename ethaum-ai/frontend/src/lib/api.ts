@@ -197,3 +197,136 @@ export async function getBuyerMatches(productId: number): Promise<MatchmakingRes
     }
 }
 
+// Comparisons (G2-Style)
+export interface ComparisonData {
+    comparison: {
+        startup_1: StartupMetrics;
+        startup_2: StartupMetrics;
+    };
+    metrics_comparison: Record<string, { winner: string; values: Record<string, number>; unit?: string }>;
+    recommendation: string;
+}
+
+export interface StartupMetrics {
+    id: number;
+    name: string;
+    category: string;
+    trust_score: number;
+    pricing_tier: string;
+    avg_implementation_days: number;
+    roi_percentage: number;
+    integration_count: number;
+    support_sla: string;
+    security_certifications: string[];
+    key_features: string[];
+    ideal_for: string;
+}
+
+export async function getComparisonStartups(): Promise<{ startups: { id: number; name: string; category: string; trust_score: number }[] }> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/comparisons`);
+        return res.json();
+    } catch {
+        return { startups: [] };
+    }
+}
+
+export async function compareStartups(id1: number, id2: number): Promise<ComparisonData | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/comparisons/${id1}/vs/${id2}`);
+        if (!res.ok) return null;
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+
+// Embeddable Badges
+export interface BadgeData {
+    product: { id: number; name: string; trust_score: number };
+    badge: { level: string; verified: boolean; issued_date: string; valid_until: string };
+    embed_codes: { html: string; markdown: string; react: string };
+    preview_url: string;
+}
+
+export async function getBadgeData(productId: number): Promise<BadgeData | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/badges/${productId}`);
+        if (!res.ok) return null;
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+
+// AI Launch Templates
+export interface LaunchTemplateResult {
+    input: { startup_name: string; category: string };
+    ai_generated: {
+        taglines: string[];
+        descriptions: string[];
+        timing: { day: string; time: string; reason: string };
+        recommended_assets: string[];
+        launch_tips: string[];
+    };
+    ai_confidence: number;
+}
+
+export async function generateLaunchTemplate(data: {
+    startup_name: string;
+    category: string;
+    one_liner: string;
+    target_audience?: string;
+}): Promise<LaunchTemplateResult | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/templates/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+
+export async function getSchedulingRecommendations(): Promise<Record<string, unknown> | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/templates/scheduling`);
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+
+// Analytics
+export interface AnalyticsDashboard {
+    overview: {
+        total_startups: number;
+        total_launches_this_week: number;
+        total_upvotes_this_week: number;
+        total_enterprise_pilots: number;
+        average_trust_score: number;
+    };
+    trending_categories: { name: string; growth: number; startups: number }[];
+    top_performers: { name: string; trust_score: number; upvotes: number; pilots_requested: number }[];
+    funding_distribution: Record<string, { count: number; percentage: number }>;
+}
+
+export async function getAnalyticsDashboard(): Promise<AnalyticsDashboard | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/analytics/dashboard`);
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+
+export async function getTrends(): Promise<Record<string, unknown> | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/analytics/trends`);
+        return res.json();
+    } catch {
+        return null;
+    }
+}

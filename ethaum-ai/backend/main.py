@@ -3,35 +3,56 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import products, launches, reviews, insights, deals, matchmaking
+from routers import (
+    products,
+    launches,
+    reviews,
+    insights,
+    deals,
+    matchmaking,
+    comparisons,
+    badges,
+    templates,
+    analytics,
+)
 
 app = FastAPI(
     title="EthAum AI",
-    description="AI-Powered SaaS Marketplace for Series A-D Startups - Combining Product Hunt + G2 + Gartner + AppSumo",
-    version="0.2.0",
+    description="AI-Powered SaaS Marketplace for Series A-D Startups - Product Hunt + G2 + Gartner + AppSumo",
+    version="1.0.0",
 )
 
 # Enable CORS for frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Core Features
+# ========== CORE FEATURES ==========
+# Product Hunt Style
 app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
-app.include_router(launches.router, prefix="/api/v1/launches", tags=["Launches - Product Hunt"])
-app.include_router(reviews.router, prefix="/api/v1/reviews", tags=["Reviews - G2"])
-app.include_router(insights.router, prefix="/api/v1/insights", tags=["Insights - Gartner"])
+app.include_router(launches.router, prefix="/api/v1/launches", tags=["Launches"])
+app.include_router(templates.router, prefix="/api/v1/templates", tags=["AI Launch Templates"])
 
-# NEW: AppSumo-Style Deals & AI Matchmaking
-app.include_router(deals.router, prefix="/api/v1/deals", tags=["Deals - AppSumo"])
+# G2 Style
+app.include_router(reviews.router, prefix="/api/v1/reviews", tags=["Reviews"])
+app.include_router(comparisons.router, prefix="/api/v1/comparisons", tags=["Comparisons"])
+app.include_router(badges.router, prefix="/api/v1/badges", tags=["Embeddable Badges"])
+
+# Gartner Style
+app.include_router(insights.router, prefix="/api/v1/insights", tags=["Insights & Quadrants"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics & Trends"])
+
+# AppSumo Style
+app.include_router(deals.router, prefix="/api/v1/deals", tags=["Enterprise Deals"])
 app.include_router(matchmaking.router, prefix="/api/v1/matchmaking", tags=["AI Matchmaking"])
 
 
 @app.get("/", tags=["Health"])
 def health_check() -> dict:
     """Health check endpoint."""
-    return {"status": "ok", "service": "ethaum-ai"}
+    return {"status": "ok", "service": "ethaum-ai", "version": "1.0.0"}
+
