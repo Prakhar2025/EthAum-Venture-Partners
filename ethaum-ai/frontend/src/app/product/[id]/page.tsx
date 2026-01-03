@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getProduct, getReviews, Product, Review } from "@/lib/api";
+import { getProduct, getReviews, getBuyerMatches, Product, Review, MatchmakingResult } from "@/lib/api";
 import { TrustScoreBadge } from "@/components/TrustScoreBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, ExternalLink, Star } from "lucide-react";
+import { ArrowUp, ExternalLink, Star, Sparkles, Users, CheckCircle } from "lucide-react";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -15,17 +15,20 @@ export default function ProductDetailPage() {
 
     const [product, setProduct] = useState<Product | null>(null);
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [matchmaking, setMatchmaking] = useState<MatchmakingResult | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const [productData, reviewsData] = await Promise.all([
+                const [productData, reviewsData, matchData] = await Promise.all([
                     getProduct(productId),
                     getReviews(productId),
+                    getBuyerMatches(productId),
                 ]);
                 setProduct(productData);
                 setReviews(reviewsData);
+                setMatchmaking(matchData);
             } catch (error) {
                 console.error("Failed to fetch:", error);
                 // Fallback data
@@ -131,6 +134,79 @@ export default function ProductDetailPage() {
                         </CardContent>
                     </Card>
 
+                    {/* AI Matchmaking Section - NEW */}
+                    <Card className="border-2 border-violet-200 bg-gradient-to-br from-violet-50/50 to-white">
+                        <CardHeader>
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="h-5 w-5 text-violet-600" />
+                                <CardTitle>AI-Recommended Enterprise Buyers</CardTitle>
+                                <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">
+                                    Explainable AI
+                                </Badge>
+                            </div>
+                            <p className="text-sm text-gray-500 mt-1">
+                                Powered by heuristic scoring based on category, trust, and traction
+                            </p>
+                        </CardHeader>
+                        <CardContent>
+                            {matchmaking && matchmaking.recommended_buyers.length > 0 ? (
+                                <div className="space-y-4">
+                                    {matchmaking.recommended_buyers.map((buyer, index) => (
+                                        <div
+                                            key={index}
+                                            className="rounded-lg border bg-white p-4"
+                                        >
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100">
+                                                        <Users className="h-5 w-5 text-violet-600" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold text-gray-900">
+                                                            {buyer.buyer_type}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            {buyer.buyer_description}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-2xl font-bold text-violet-600">
+                                                            {buyer.match_score}%
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-gray-500">Match Score</p>
+                                                </div>
+                                            </div>
+                                            <div className="mt-3">
+                                                <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                                                    <div
+                                                        className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500"
+                                                        style={{ width: `${buyer.match_score}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                {buyer.reasons.map((reason, i) => (
+                                                    <Badge key={i} variant="secondary" className="text-xs">
+                                                        <CheckCircle className="mr-1 h-3 w-3" />
+                                                        {reason}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                            <p className="mt-2 text-sm font-medium text-violet-600">
+                                                {buyer.recommendation}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-500">No buyer matches found.</p>
+                            )}
+                        </CardContent>
+                    </Card>
+
                     {/* Reviews */}
                     <Card>
                         <CardHeader>
@@ -149,8 +225,8 @@ export default function ProductDetailPage() {
                                                     <Star
                                                         key={i}
                                                         className={`h-4 w-4 ${i < review.rating
-                                                                ? "fill-amber-400 text-amber-400"
-                                                                : "text-gray-200"
+                                                            ? "fill-amber-400 text-amber-400"
+                                                            : "text-gray-200"
                                                             }`}
                                                     />
                                                 ))}
@@ -208,6 +284,24 @@ export default function ProductDetailPage() {
                             </p>
                         </CardContent>
                     </Card>
+
+                    {/* AI Matchmaking Quick Stats */}
+                    {matchmaking && (
+                        <Card className="border-violet-200">
+                            <CardContent className="p-4">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Sparkles className="h-4 w-4 text-violet-600" />
+                                    <span className="font-semibold text-gray-900">AI Matchmaking</span>
+                                </div>
+                                <p className="text-sm text-gray-600">
+                                    <span className="font-bold text-violet-600">{matchmaking.total_matches}</span> enterprise buyer matches found
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    {matchmaking.ai_matchmaking.algorithm}
+                                </p>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
             </div>
         </div>

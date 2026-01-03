@@ -120,3 +120,80 @@ export async function getQuadrantData(): Promise<QuadrantData[]> {
         ];
     }
 }
+
+// Deals (AppSumo-Style)
+export interface Deal {
+    id: number;
+    product_id: number;
+    startup_name: string;
+    pilot_title: string;
+    description: string;
+    ideal_buyer: string;
+    credibility_score: number;
+    pilot_duration: string;
+    status: string;
+}
+
+export interface PilotRequestResponse {
+    success: boolean;
+    message: string;
+    deal_id: number;
+    company_name: string;
+}
+
+export async function getDeals(): Promise<Deal[]> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/deals`);
+        return res.json();
+    } catch {
+        return [];
+    }
+}
+
+export async function requestPilot(data: {
+    deal_id: number;
+    company_name: string;
+    contact_email: string;
+}): Promise<PilotRequestResponse> {
+    const res = await fetch(`${API_BASE}/api/v1/deals/request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+    return res.json();
+}
+
+// AI Matchmaking
+export interface BuyerMatch {
+    buyer_type: string;
+    buyer_description: string;
+    match_score: number;
+    reasons: string[];
+    recommendation: string;
+}
+
+export interface MatchmakingResult {
+    startup: {
+        id: number;
+        name: string;
+        category: string;
+        trust_score: number;
+    };
+    ai_matchmaking: {
+        algorithm: string;
+        factors: string[];
+    };
+    recommended_buyers: BuyerMatch[];
+    total_matches: number;
+}
+
+export async function getBuyerMatches(productId: number): Promise<MatchmakingResult | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/matchmaking/${productId}`);
+        if (!res.ok) return null;
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+

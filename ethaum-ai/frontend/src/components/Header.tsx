@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles, Zap } from "lucide-react";
 
 export function Header() {
     return (
@@ -14,22 +16,33 @@ export function Header() {
                     <span className="text-xl font-semibold text-gray-900">EthAum AI</span>
                 </Link>
 
-                <nav className="hidden items-center gap-6 md:flex">
+                <nav className="hidden items-center gap-1 md:flex">
                     <Link
                         href="/marketplace"
-                        className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                        className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-50"
                     >
                         Marketplace
                     </Link>
                     <Link
-                        href="/insights"
-                        className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                        href="/deals"
+                        className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-50 flex items-center gap-1"
                     >
-                        Insights
+                        <Zap className="h-3 w-3 text-orange-500" />
+                        Deals
+                        <Badge className="ml-1 bg-orange-100 text-orange-700 hover:bg-orange-100 text-xs px-1.5 py-0">
+                            NEW
+                        </Badge>
+                    </Link>
+                    <Link
+                        href="/insights"
+                        className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-50 flex items-center gap-1"
+                    >
+                        <Sparkles className="h-3 w-3 text-violet-500" />
+                        AI Insights
                     </Link>
                     <Link
                         href="/launch"
-                        className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                        className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-50"
                     >
                         Launch
                     </Link>
