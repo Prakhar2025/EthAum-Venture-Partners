@@ -26,6 +26,8 @@ The platform allows:
 - Buyers and investors to discover high-trust startups
 - All users to understand *why* a startup scores the way it does
 
+In addition to AI-based credibility scoring, EthAum AI supports Product Hunt–style startup launches with upvotes and rankings, along with G2-style review sentiment analysis integrated into the Trust Score.
+
 ---
 
 ## ⭐ Key Feature: AI Trust Score
