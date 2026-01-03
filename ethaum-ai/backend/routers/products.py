@@ -71,7 +71,13 @@ def get_product(product_id: int) -> dict:
                     "market_traction": market_traction_score,
                     "user_sentiment": user_sentiment_score,
                 },
+                "launch": {
+                    "is_launched": True,
+                    "upvotes": 23,
+                    "rank": 4
+                }
             }
+
     raise HTTPException(status_code=404, detail="Product not found")
 
 

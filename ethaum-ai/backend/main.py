@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from routers import products
+from routers import products, launches
 
 app = FastAPI(
     title="EthAum AI",
@@ -11,6 +11,7 @@ app = FastAPI(
 )
 
 app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
+app.include_router(launches.router, prefix="/api/v1/launches", tags=["Launches"])
 
 
 @app.get("/", tags=["Health"])
