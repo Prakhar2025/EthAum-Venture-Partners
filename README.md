@@ -56,10 +56,32 @@ This approach prioritizes **business viability and legitimacy** over popularity 
 
 ---
 
+## 🌟 Overall Credibility Score (Key Differentiator)
+Beyond the Trust Score, EthAum AI provides a **unified credibility metric** that combines all platform signals:
+
+### Formula
+
+Overall Credibility = 
+0.30 × Launch Signal (Product Hunt upvotes) +
+0.30 × Review Signal (G2 ratings & volume) +
+0.40 × Trust Score (Gartner data/traction)
+
+
+### Output Features
+- **0-100 Score** with explainable breakdown
+- **Badge Tiers**: Elite (90+), Verified Leader (80+), Rising Star (70+)
+- **Emerging Quadrant**: Gartner-style positioning (Leaders, Challengers, Visionaries, Niche)
+- **Actionable Insights**: AI-generated recommendations for improvement
+- **Embeddable Widgets**: Badges for startup websites
+
+This unified metric is what differentiates EthAum AI from competitors—a single, transparent score across all validation dimensions.
+
+---
+
 ## 🧠 Explainable AI by Design
 EthAum AI avoids black-box models for credibility.
 
-Every Trust Score includes:
+Every score (Trust Score + Overall Credibility) includes:
 - Individual signal scores
 - Weight transparency
 - Clear justification understandable by non-technical users
@@ -78,11 +100,12 @@ Signals Layer → Scoring Layer
 
 
 ### Backend Modules
-- `routers/` → API endpoints
+- `routers/` → API endpoints (products, launches, reviews, insights)
 - `schemas/` → Request / response contracts
 - `models/` → Internal domain models
 - `services/signals.py` → Signal normalization
 - `services/scoring.py` → Trust score computation
+- `services/credibility.py` → Overall credibility scoring engine
 
 ---
 
@@ -99,25 +122,40 @@ Figma Design:
 
 ## 🔌 API Endpoints (MVP)
 
+### Product Hunt Features
+| Endpoint | Method | Description |
+|--------|--------|------------|
+| `/api/v1/launches` | POST | Submit product launch |
+| `/api/v1/launches/{id}/upvote` | POST | Upvote a launch |
+| `/api/v1/launches/leaderboard` | GET | Top launches by upvotes |
+
+### G2 Features
+| Endpoint | Method | Description |
+|--------|--------|------------|
+| `/api/v1/reviews` | POST | Submit review/testimonial |
+| `/api/v1/reviews/{product_id}` | GET | Get reviews for product |
+
+### Gartner Features
 | Endpoint | Method | Description |
 |--------|--------|------------|
 | `/api/v1/products` | POST | Submit startup |
 | `/api/v1/products` | GET | List startups |
-| `/api/v1/products/{id}` | GET | Startup details + score breakdown |
-| `/api/v1/products/{id}/score` | GET | Trust score only |
+| `/api/v1/products/{id}` | GET | Startup details + trust score breakdown |
+| `/api/v1/insights/{id}/credibility` | GET | Overall credibility score (unified metric) |
+| `/api/v1/insights/quadrant` | GET | Emerging Leaders Quadrant view |
+| `/api/v1/insights/{id}/badge` | GET | Embeddable badge for startup sites |
 
 Swagger UI available at:
 `/docs` (when the backend is running locally or deployed)
-
-
 ---
 
 ## 🛠️ Tech Stack
-- **Backend:** FastAPI (Python)
-- **AI Logic:** Rule-based, explainable scoring
-- **Data:** In-memory (MVP)
-- **Frontend:** Figma-designed UI (Next.js optional)
-- **Dev Tools:** Git, REST, OpenAPI
+- **Backend:** FastAPI (Python) with CORS support
+- **AI Logic:** Rule-based, explainable scoring (no ML training required)
+- **Data:** In-memory storage (MVP) - production-ready for DB integration
+- **API Design:** RESTful with OpenAPI/Swagger documentation
+- **Frontend:** Figma-designed UI (implementation ready)
+- **Dev Tools:** Git, Python type hints, modular architecture
 
 ---
 
@@ -125,6 +163,7 @@ Swagger UI available at:
 EthAum AI was built using AI-assisted development:
 - **Gemini 3 Pro** → system design and scoring logic
 - **Claude Opus** → clean backend implementation
+- **GitHub Copilot** → code completion and optimization
 
 Human-led design decisions ensure correctness, clarity, and reliability.
 
@@ -137,14 +176,24 @@ To maintain speed and clarity, the MVP intentionally excludes:
 - Chat or messaging systems
 - Mobile apps
 
+
 ---
 
 ## 🗺️ Roadmap
-- Verified data sources and scraping
-- Enterprise buyer matchmaking
-- Startup comparison insights
-- Public credibility badges
-- Scalable database integration
+### Phase 1 (Complete ✅)
+- ✅ Product Hunt-style launches and upvoting
+- ✅ G2-style reviews and testimonials
+- ✅ Gartner-style insights and credibility scoring
+- ✅ Emerging Quadrant visualization
+- ✅ Embeddable badge system
+
+### Phase 2 (Future)
+- AppSumo-style deals and enterprise pilots
+- AI matchmaking for buyer-startup connections
+- Verified data sources and web scraping
+- Real-time analytics dashboards
+- Scalable database integration (PostgreSQL)
+- Authentication and user management
 
 ---
 
