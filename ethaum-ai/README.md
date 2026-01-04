@@ -29,7 +29,7 @@ Combining the capabilities of Product Hunt + G2 + Gartner + AppSumo into one uni
 ![Enterprise Deals](./docs/screenshots/deals.png)
 
 ### Analytics Dashboard
-![Analytics](./docs/screenshots/analytics1.png)
+![Analytics](./docs/screenshots/analytics.png)
 
 ### AI Launch Wizard
 ![Launch Wizard](./docs/screenshots/wizard.png)

@@ -29,7 +29,7 @@ Combining the capabilities of Product Hunt + G2 + Gartner + AppSumo into one uni
 ![Enterprise Deals](./ethaum-ai/docs/screenshots/deals.png)
 
 ### Analytics Dashboard
-![Analytics](./ethaum-ai/docs/screenshots/analytics1.png)
+![Analytics](./ethaum-ai/docs/screenshots/analytics.png)
 
 ### AI Launch Wizard
 ![Launch Wizard](./ethaum-ai/docs/screenshots/wizard.png)
