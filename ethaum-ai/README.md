@@ -6,6 +6,31 @@ Combining the capabilities of Product Hunt + G2 + Gartner + AppSumo into one uni
 
 ---
 
+## 📸 Screenshots
+
+### Homepage
+![Homepage](./docs/screenshots/home.png)
+
+### G2-Style Comparisons
+![Compare Startups](./docs/screenshots/compare.png)
+
+### AppSumo-Style Deals
+![Enterprise Deals](./docs/screenshots/deals.png)
+
+### Analytics Dashboard
+![Analytics](./docs/screenshots/analytics1.png)
+
+### AI Launch Wizard
+![Launch Wizard](./docs/screenshots/wizard.png)
+
+---
+
+## 🏗️ Architecture
+
+![Architecture Diagram](./docs/architecture.png)
+
+---
+
 ## 🎯 Problem Statement
 
 Series A-D startups ($1M-$50M ARR) face:
@@ -93,8 +118,8 @@ Pattern-based AI generates:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ethaum-ai.git
-cd ethaum-ai
+git clone https://github.com/Prakhar2025/EthAum-Venture-Partners.git
+cd EthAum-Venture-Partners/ethaum-ai
 
 # Backend setup
 cd backend
@@ -141,7 +166,9 @@ ethaum-ai/
 │       ├── app/             # Next.js pages
 │       ├── components/      # Reusable UI components
 │       └── lib/             # API utilities
-└── README.md
+└── docs/
+    ├── architecture.png     # System architecture
+    └── screenshots/         # UI screenshots
 ```
 
 ---
