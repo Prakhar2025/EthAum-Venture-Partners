@@ -4,7 +4,18 @@
 
 Combining the capabilities of Product Hunt + G2 + Gartner + AppSumo into one unified platform with AI-powered credibility scoring and enterprise matchmaking.
 
+## 🚀 Live Demo
+
+| Component | URL |
+|-----------|-----|
+| **Frontend** | [https://ethaumai.vercel.app](https://ethaumai.vercel.app) |
+| **Backend API** | [https://ethaum-venture-partners.onrender.com](https://ethaum-venture-partners.onrender.com) |
+| **API Docs** | [https://ethaum-venture-partners.onrender.com/docs](https://ethaum-venture-partners.onrender.com/docs) |
+
+> ⚠️ **Note:** Backend may take ~30 seconds to wake up on first request (free tier cold start).
+
 ---
+
 
 ## 📸 Screenshots
 
