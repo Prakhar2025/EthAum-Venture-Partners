@@ -14,6 +14,10 @@ Combining the capabilities of Product Hunt + G2 + Gartner + AppSumo into one uni
 
 > ⚠️ **Note:** Backend may take ~30 seconds to wake up on first request (free tier cold start).
 
+## 🎥 Demo Video
+
+[![Watch Demo](https://img.shields.io/badge/YouTube-Demo_Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/KPuu3hIaQIY)
+
 ---
 
 
