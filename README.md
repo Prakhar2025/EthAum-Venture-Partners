@@ -1,208 +1,214 @@
-# EthAum AI 🚀  
-AI-Powered SaaS Credibility & Startup Discovery Platform
+# EthAum AI
 
-## 🧩 Overview
-EthAum AI is an AI-driven SaaS marketplace designed to help enterprises, investors, and founders quickly assess the credibility of Series A–D startups.  
-The platform combines startup discovery with an explainable AI-based Trust Score that reduces due-diligence time and surfaces high-signal products.
+**AI-Powered SaaS Marketplace for Series A-D Startups**
 
----
-
-## ❌ Problem
-Discovering reliable B2B SaaS startups today is noisy and inefficient:
-- Review platforms can be manipulated
-- Analyst reports are expensive and slow
-- Early traction signals are scattered across sources
-- Enterprises lack a fast, objective credibility signal
-
-As a result, promising startups struggle with trust, and buyers face high evaluation costs.
+Combining the capabilities of Product Hunt + G2 + Gartner + AppSumo into one unified platform with AI-powered credibility scoring and enterprise matchmaking.
 
 ---
 
-## ✅ Solution
-EthAum AI provides a **single, transparent credibility score** backed by explainable AI logic.
+## 📸 Screenshots
 
-The platform allows:
-- Founders to submit startups for credibility scoring
-- Buyers and investors to discover high-trust startups
-- All users to understand *why* a startup scores the way it does
+### Homepage
+![Homepage](./ethaum-ai/docs/screenshots/home.png)
 
-In addition to AI-based credibility scoring, EthAum AI supports Product Hunt–style startup launches with upvotes and rankings, along with G2-style review sentiment analysis integrated into the Trust Score.
+### G2-Style Comparisons
+![Compare Startups](./ethaum-ai/docs/screenshots/compare.png)
 
----
+### AppSumo-Style Deals
+![Enterprise Deals](./ethaum-ai/docs/screenshots/deals.png)
 
-## ⭐ Key Feature: AI Trust Score
-At the core of EthAum AI is an explainable Trust Score (0–100).
+### Analytics Dashboard
+![Analytics](./ethaum-ai/docs/screenshots/analytics1.png)
 
-### Scoring Philosophy
-> **“First we verify you exist, then we verify you grow, finally we verify you are loved.”**
-
-### Scoring Weights
-| Signal | Weight | Reason |
-|------|--------|-------|
-| Market Traction | 40% | Strongest indicator of product-market fit |
-| Data Integrity | 35% | Ensures legitimacy and compliance |
-| User Sentiment | 25% | Captures real user experience |
-
-### Formula
-
-Trust Score = round(
-0.40 × Market Traction +
-0.35 × Data Integrity +
-0.25 × User Sentiment
-)
-
-
-This approach prioritizes **business viability and legitimacy** over popularity alone.
-
----
-
-## 🌟 Overall Credibility Score (Key Differentiator)
-Beyond the Trust Score, EthAum AI provides a **unified credibility metric** that combines all platform signals:
-
-### Formula
-
-Overall Credibility = 
-0.30 × Launch Signal (Product Hunt upvotes) +
-0.30 × Review Signal (G2 ratings & volume) +
-0.40 × Trust Score (Gartner data/traction)
-
-
-### Output Features
-- **0-100 Score** with explainable breakdown
-- **Badge Tiers**: Elite (90+), Verified Leader (80+), Rising Star (70+)
-- **Emerging Quadrant**: Gartner-style positioning (Leaders, Challengers, Visionaries, Niche)
-- **Actionable Insights**: AI-generated recommendations for improvement
-- **Embeddable Widgets**: Badges for startup websites
-
-This unified metric is what differentiates EthAum AI from competitors—a single, transparent score across all validation dimensions.
-
----
-
-## 🧠 Explainable AI by Design
-EthAum AI avoids black-box models for credibility.
-
-Every score (Trust Score + Overall Credibility) includes:
-- Individual signal scores
-- Weight transparency
-- Clear justification understandable by non-technical users
-
-This makes the system suitable for enterprise and investor use.
+### AI Launch Wizard
+![Launch Wizard](./ethaum-ai/docs/screenshots/wizard.png)
 
 ---
 
 ## 🏗️ Architecture
 
-Frontend (Next.js – optional)
-|
-FastAPI Backend
-|
-Signals Layer → Scoring Layer
-
-
-### Backend Modules
-- `routers/` → API endpoints (products, launches, reviews, insights)
-- `schemas/` → Request / response contracts
-- `models/` → Internal domain models
-- `services/signals.py` → Signal normalization
-- `services/scoring.py` → Trust score computation
-- `services/credibility.py` → Overall credibility scoring engine
+![Architecture Diagram](./ethaum-ai/docs/architecture.png)
 
 ---
 
-## 🎨 UI / Product Design
-The product interface was designed in Figma to reflect the core user journeys
-for founders, enterprises, and investors.
+## 🎯 Problem Statement
 
-The designs focus on clarity, trust signals, and explainable AI.
+Series A-D startups ($1M-$50M ARR) face:
+- **High CAC**: Enterprise acquisition costs are unsustainable
+- **Trust Gap**: No unified credibility scoring system
+- **Fragmented Tools**: Need 4+ platforms (Product Hunt, G2, Gartner, AppSumo)
+- **Slow Sales Cycles**: Enterprise deals take 6-12 months
 
-Figma Design:
-👉 https://smooth-planet-44304520.figma.site/
+## 💡 Solution: EthAum AI
+
+A one-stop marketplace that:
+- **Reduces marketing spend by 80-90%** through organic virality
+- **Accelerates enterprise deals** via AI matchmaking and credibility scores
+- **Provides embeddable trust badges** for startup websites
+- **Offers data-driven insights** without analyst fees
 
 ---
 
-## 🔌 API Endpoints (MVP)
+## ✨ Features
 
-### Product Hunt Features
-| Endpoint | Method | Description |
-|--------|--------|------------|
-| `/api/v1/launches` | POST | Submit product launch |
-| `/api/v1/launches/{id}/upvote` | POST | Upvote a launch |
-| `/api/v1/launches/leaderboard` | GET | Top launches by upvotes |
+### 🚀 Product Hunt-Style Launches
+- Upvote system with leaderboard
+- **AI Launch Wizard** with tagline generation and scheduling recommendations
+- Featured badges for top launches
 
-### G2 Features
-| Endpoint | Method | Description |
-|--------|--------|------------|
-| `/api/v1/reviews` | POST | Submit review/testimonial |
-| `/api/v1/reviews/{product_id}` | GET | Get reviews for product |
+### ⭐ G2-Style Reviews & Comparisons
+- Review submission with AI sentiment analysis
+- **Side-by-side startup comparisons** with ROI metrics
+- **Embeddable credibility badges** with copy-paste embed codes
 
-### Gartner Features
-| Endpoint | Method | Description |
-|--------|--------|------------|
-| `/api/v1/products` | POST | Submit startup |
-| `/api/v1/products` | GET | List startups |
-| `/api/v1/products/{id}` | GET | Startup details + trust score breakdown |
-| `/api/v1/insights/{id}/credibility` | GET | Overall credibility score (unified metric) |
-| `/api/v1/insights/quadrant` | GET | Emerging Leaders Quadrant view |
-| `/api/v1/insights/{id}/badge` | GET | Embeddable badge for startup sites |
+### 📊 Gartner-Style Insights
+- **Emerging Quadrant** visualization (Leaders, Challengers, Visionaries, Niche)
+- **Analytics dashboard** with trends and funding distribution
+- AI-generated credibility scores
 
-Swagger UI available at:
-`/docs` (when the backend is running locally or deployed)
+### 💼 AppSumo-Style Deals
+- Enterprise pilot programs with credibility backing
+- **AI Matchmaking** - recommends enterprise buyers to startups
+- Low-risk trial periods (30-60 days)
+
+---
+
+## 🧠 AI Components
+
+### 1. Trust Score Algorithm
+```
+Trust Score = (Data Integrity × 0.40) + (Market Traction × 0.35) + (User Sentiment × 0.25)
+```
+- **Data Integrity**: Domain age, team size, funding verification
+- **Market Traction**: Revenue, customer count, growth rate
+- **User Sentiment**: Review ratings, sentiment analysis
+
+### 2. AI Matchmaking
+```
+Match Score = Category Match (40) + Trust Score (30) + Market Traction (30)
+```
+Recommends enterprise buyer personas based on startup profile.
+
+### 3. Launch Template Generator
+Pattern-based AI generates:
+- Tagline options
+- Description templates
+- Optimal launch timing (Tuesday 00:01 PST recommended)
+- Asset checklists
+
 ---
 
 ## 🛠️ Tech Stack
-- **Backend:** FastAPI (Python) with CORS support
-- **AI Logic:** Rule-based, explainable scoring (no ML training required)
-- **Data:** In-memory storage (MVP) - production-ready for DB integration
-- **API Design:** RESTful with OpenAPI/Swagger documentation
-- **Frontend:** Figma-designed UI (implementation ready)
-- **Dev Tools:** Git, Python type hints, modular architecture
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Recharts |
+| **Backend** | FastAPI (Python), Pydantic |
+| **State** | In-memory (MVP) |
 
 ---
 
-## 🤖 AI-Assisted Development
-EthAum AI was built using AI-assisted development:
-- **Gemini 3 Pro** → system design and scoring logic
-- **Claude Opus** → clean backend implementation
-- **GitHub Copilot** → code completion and optimization
+## 🚀 Getting Started
 
-Human-led design decisions ensure correctness, clarity, and reliability.
+### Prerequisites
+- Node.js 18+
+- Python 3.10+
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Prakhar2025/EthAum-Venture-Partners.git
+cd EthAum-Venture-Partners/ethaum-ai
+
+# Backend setup
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+
+# Frontend setup (new terminal)
+cd frontend
+npm install
+npm run dev
+```
+
+### Access
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
 
 ---
 
-## 🚧 MVP Constraints
-To maintain speed and clarity, the MVP intentionally excludes:
-- Payments or transactions
-- External web scraping
-- Chat or messaging systems
-- Mobile apps
+## 📁 Project Structure
 
+```
+EthAum-Venture-Partners/
+├── ethaum-ai/
+│   ├── backend/
+│   │   ├── main.py              # FastAPI entry point
+│   │   ├── routers/             # API endpoints
+│   │   ├── services/            # AI scoring logic
+│   │   └── schemas/             # Pydantic models
+│   ├── frontend/
+│   │   └── src/
+│   │       ├── app/             # Next.js pages
+│   │       ├── components/      # UI components
+│   │       └── lib/             # API utilities
+│   └── docs/
+│       ├── architecture.png
+│       └── screenshots/
+└── render.yaml                  # Deployment config
+```
 
 ---
 
-## 🗺️ Roadmap
-### Phase 1 (Complete ✅)
-- ✅ Product Hunt-style launches and upvoting
-- ✅ G2-style reviews and testimonials
-- ✅ Gartner-style insights and credibility scoring
-- ✅ Emerging Quadrant visualization
-- ✅ Embeddable badge system
+## 🔌 API Endpoints
 
-### Phase 2 (Future)
-- AppSumo-style deals and enterprise pilots
-- AI matchmaking for buyer-startup connections
-- Verified data sources and web scraping
-- Real-time analytics dashboards
-- Scalable database integration (PostgreSQL)
-- Authentication and user management
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/products` | GET/POST | Product management |
+| `/api/v1/launches/leaderboard` | GET | Top launched products |
+| `/api/v1/launches/{id}/upvote` | POST | Upvote a product |
+| `/api/v1/reviews/{product_id}` | GET/POST | Reviews with sentiment |
+| `/api/v1/insights/quadrant` | GET | Gartner-style quadrant |
+| `/api/v1/deals` | GET | Enterprise pilot offers |
+| `/api/v1/deals/request` | POST | Request a pilot |
+| `/api/v1/matchmaking/{id}` | GET | AI buyer recommendations |
+| `/api/v1/comparisons/{id1}/vs/{id2}` | GET | Compare two startups |
+| `/api/v1/badges/{id}` | GET | Embeddable badge codes |
+| `/api/v1/templates/generate` | POST | AI launch templates |
+| `/api/v1/analytics/dashboard` | GET | Trend analytics |
+
+---
+
+## 📱 Pages
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Home | `/` | Landing page |
+| Marketplace | `/marketplace` | Browse all startups |
+| Product Detail | `/product/[id]` | Details + AI matchmaking |
+| Compare | `/compare` | Side-by-side comparison |
+| Deals | `/deals` | Enterprise pilot offers |
+| Insights | `/insights` | Gartner quadrant |
+| Analytics | `/analytics` | Trend dashboard |
+| Badges | `/badges` | Embeddable widgets |
+| Launch Wizard | `/wizard` | AI template generator |
+| Launch | `/launch` | Submit new launch |
 
 ---
 
 ## 📬 Contact
-Built as part of the EthAum AI MVP challenge.
 
-For demo, feedback, or collaboration:
-- Name: Prakhar Shukla
-- LinkedIn: https://www.linkedin.com/in/prakhar-shukla-471649261
-- GitHub: https://github.com/Prakhar2025
-- Email: prakhar230125@gmail.com
+Built for EthAum Venture Partners Hackathon 2026
 
+- **Name**: Prakhar Shukla
+- **LinkedIn**: https://www.linkedin.com/in/prakhar-shukla-471649261
+- **GitHub**: https://github.com/Prakhar2025
+- **Email**: prakhar230125@gmail.com
+
+---
+
+## 📄 License
+
+MIT License
