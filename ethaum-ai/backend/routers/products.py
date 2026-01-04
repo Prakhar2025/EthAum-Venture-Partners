@@ -43,38 +43,34 @@ def list_products() -> list[dict]:
 @router.get("/{product_id}")
 def get_product(product_id: int) -> dict:
     """Get startup details with trust score breakdown."""
+    
+    # Product-specific mock data for demo (breakdown only - trust score from list)
+    PRODUCT_SIGNALS = {
+        1: {"data_integrity": 95, "market_traction": 90, "user_sentiment": 88},  # NeuraTech
+        2: {"data_integrity": 90, "market_traction": 85, "user_sentiment": 82},  # CloudSync
+        3: {"data_integrity": 80, "market_traction": 75, "user_sentiment": 78},  # FinLedger
+    }
+    
     for product in DUMMY_PRODUCTS:
         if product["id"] == product_id:
-            # Mock raw inputs (would come from scraping/database in production)
-            has_https = True
-            domain_age_years = 3
-            employee_count = 42
-            average_rating = 4.2
-
-            # Calculate individual signal scores
-            data_integrity_score = calculate_data_integrity_score(has_https, domain_age_years)
-            market_traction_score = calculate_market_traction_score(employee_count)
-            user_sentiment_score = calculate_user_sentiment_score(average_rating)
-
-            # Calculate final trust score
-            trust_score = calculate_trust_score(
-                data_integrity=data_integrity_score,
-                market_traction=market_traction_score,
-                user_sentiment=user_sentiment_score,
-            )
+            # Get breakdown (display only - trust score comes from product list)
+            signals = PRODUCT_SIGNALS.get(product_id, {
+                "data_integrity": 80, "market_traction": 75, "user_sentiment": 75
+            })
 
             return {
                 **product,
-                "trust_score": trust_score,
+                # Use the ORIGINAL trust_score from DUMMY_PRODUCTS for consistency
+                "trust_score": product["trust_score"],
                 "score_breakdown": {
-                    "data_integrity": data_integrity_score,
-                    "market_traction": market_traction_score,
-                    "user_sentiment": user_sentiment_score,
+                    "data_integrity": signals["data_integrity"],
+                    "market_traction": signals["market_traction"],
+                    "user_sentiment": signals["user_sentiment"],
                 },
                 "launch": {
                     "is_launched": True,
-                    "upvotes": 23,
-                    "rank": 4
+                    "upvotes": 23 + (product_id * 10),
+                    "rank": 5 - product_id
                 }
             }
 
@@ -89,5 +85,7 @@ def get_product_score(product_id: int) -> dict:
         if product["id"] == product_id:
             return {"trust_score": product["trust_score"]}
     raise HTTPException(status_code=404, detail="Product not found")
+
+
 
 
