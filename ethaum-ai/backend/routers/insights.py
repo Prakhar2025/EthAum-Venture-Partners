@@ -1,7 +1,7 @@
-"""EthAum AI - Insights Router (Gartner-Inspired)."""
+"""EthAum AI - Insights Router with Supabase Database (Gartner-Inspired)."""
 
 from fastapi import APIRouter, HTTPException
-
+from database import get_db
 from services.credibility import (
     calculate_overall_credibility_score,
     calculate_emerging_quadrant_position,
@@ -17,27 +17,24 @@ def get_overall_credibility(product_id: int) -> dict:
     
     This is the CORE DIFFERENTIATOR - unifying Product Hunt + G2 + Gartner.
     """
-    # Import data from other routers (in production, use shared data layer)
-    from routers.launches import LAUNCHES
-    from routers.products import DUMMY_PRODUCTS
-    from routers.reviews import REVIEWS
+    db = get_db()
     
-    # Find product
-    product = next((p for p in DUMMY_PRODUCTS if p["id"] == product_id), None)
-    if not product:
+    # Get product
+    product_result = db.table("products").select("*").eq("id", product_id).execute()
+    if not product_result.data:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    # Gather signals from all sources
-    product_launches = [l for l in LAUNCHES if l["product_id"] == product_id]
-    total_upvotes = sum(l["upvotes"] for l in product_launches)
+    product = product_result.data[0]
     
-    product_reviews = [r for r in REVIEWS if r["product_id"] == product_id]
-    review_count = len(product_reviews)
-    average_rating = (
-        sum(r["rating"] for r in product_reviews) / review_count
-        if review_count > 0
-        else 0.0
-    )
+    # Get launches
+    launches_result = db.table("launches").select("upvotes").eq("product_id", product_id).execute()
+    total_upvotes = sum(l.get("upvotes", 0) for l in launches_result.data or [])
+    
+    # Get reviews
+    reviews_result = db.table("reviews").select("rating").eq("product_id", product_id).execute()
+    reviews = reviews_result.data or []
+    review_count = len(reviews)
+    average_rating = sum(r.get("rating", 0) for r in reviews) / review_count if review_count > 0 else 0.0
     
     trust_score = product.get("trust_score", 75)
     
@@ -54,8 +51,8 @@ def get_overall_credibility(product_id: int) -> dict:
     credibility_data["product"] = {
         "id": product["id"],
         "name": product["name"],
-        "category": product["category"],
-        "funding_stage": product["funding_stage"],
+        "category": product.get("category", ""),
+        "funding_stage": product.get("funding_stage", ""),
     }
     
     # Add raw metrics
@@ -72,29 +69,26 @@ def get_overall_credibility(product_id: int) -> dict:
 def get_emerging_quadrant() -> dict:
     """
     Gartner-style Emerging Quadrant view of all Series A-D startups.
-    
-    Returns all products positioned by credibility vs traction.
     """
-    from routers.launches import LAUNCHES
-    from routers.products import DUMMY_PRODUCTS
-    from routers.reviews import REVIEWS
+    db = get_db()
+    
+    # Get all products
+    products_result = db.table("products").select("*").execute()
     
     quadrant_data = []
     
-    for product in DUMMY_PRODUCTS:
+    for product in products_result.data or []:
         product_id = product["id"]
         
-        # Calculate overall credibility
-        product_launches = [l for l in LAUNCHES if l["product_id"] == product_id]
-        total_upvotes = sum(l["upvotes"] for l in product_launches)
+        # Get launches
+        launches_result = db.table("launches").select("upvotes").eq("product_id", product_id).execute()
+        total_upvotes = sum(l.get("upvotes", 0) for l in launches_result.data or [])
         
-        product_reviews = [r for r in REVIEWS if r["product_id"] == product_id]
-        review_count = len(product_reviews)
-        average_rating = (
-            sum(r["rating"] for r in product_reviews) / review_count
-            if review_count > 0
-            else 0.0
-        )
+        # Get reviews
+        reviews_result = db.table("reviews").select("rating").eq("product_id", product_id).execute()
+        reviews = reviews_result.data or []
+        review_count = len(reviews)
+        average_rating = sum(r.get("rating", 0) for r in reviews) / review_count if review_count > 0 else 0.0
         
         trust_score = product.get("trust_score", 75)
         
@@ -106,11 +100,8 @@ def get_emerging_quadrant() -> dict:
         )
         
         overall_score = credibility_result["overall_credibility_score"]
-        
-        # Use trust score's market traction component as traction score
         market_traction_score = credibility_result["breakdown"]["trust_score"]
         
-        # Position in quadrant
         position = calculate_emerging_quadrant_position(
             overall_credibility_score=overall_score,
             market_traction_score=market_traction_score,
@@ -120,7 +111,7 @@ def get_emerging_quadrant() -> dict:
             "product": {
                 "id": product["id"],
                 "name": product["name"],
-                "category": product["category"],
+                "category": product.get("category", ""),
             },
             "overall_credibility_score": overall_score,
             "badge": credibility_result["badge"],
@@ -145,29 +136,25 @@ def get_emerging_quadrant() -> dict:
 def get_embeddable_badge(product_id: int) -> dict:
     """
     Get embeddable badge data for startup websites.
-    
-    Startups can embed this on their site to show credibility.
     """
-    from routers.launches import LAUNCHES
-    from routers.products import DUMMY_PRODUCTS
-    from routers.reviews import REVIEWS
+    db = get_db()
     
-    # Find product
-    product = next((p for p in DUMMY_PRODUCTS if p["id"] == product_id), None)
-    if not product:
+    # Get product
+    product_result = db.table("products").select("*").eq("id", product_id).execute()
+    if not product_result.data:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    # Calculate credibility
-    product_launches = [l for l in LAUNCHES if l["product_id"] == product_id]
-    total_upvotes = sum(l["upvotes"] for l in product_launches)
+    product = product_result.data[0]
     
-    product_reviews = [r for r in REVIEWS if r["product_id"] == product_id]
-    review_count = len(product_reviews)
-    average_rating = (
-        sum(r["rating"] for r in product_reviews) / review_count
-        if review_count > 0
-        else 0.0
-    )
+    # Get launches
+    launches_result = db.table("launches").select("upvotes").eq("product_id", product_id).execute()
+    total_upvotes = sum(l.get("upvotes", 0) for l in launches_result.data or [])
+    
+    # Get reviews
+    reviews_result = db.table("reviews").select("rating").eq("product_id", product_id).execute()
+    reviews = reviews_result.data or []
+    review_count = len(reviews)
+    average_rating = sum(r.get("rating", 0) for r in reviews) / review_count if review_count > 0 else 0.0
     
     trust_score = product.get("trust_score", 75)
     

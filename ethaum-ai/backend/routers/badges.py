@@ -1,13 +1,8 @@
-"""EthAum AI - Embeddable Badge Router.
-
-This router provides embeddable credibility badges that startups
-can display on their websites to showcase their EthAum verification.
-
-NOTE: This is MVP/Demo mode.
-"""
+"""EthAum AI - Embeddable Badge Router with Supabase Database."""
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
+from database import get_db
 
 router = APIRouter()
 
@@ -16,22 +11,18 @@ router = APIRouter()
 def get_badge_data(product_id: int) -> dict:
     """
     Get embeddable badge data for a startup.
-    
-    Returns badge configuration and embed codes for:
-    - HTML embed
-    - Markdown embed
-    - React component
     """
-    from routers.products import DUMMY_PRODUCTS
+    db = get_db()
     
-    product = next((p for p in DUMMY_PRODUCTS if p["id"] == product_id), None)
-    if not product:
+    product_result = db.table("products").select("*").eq("id", product_id).execute()
+    if not product_result.data:
         raise HTTPException(status_code=404, detail="Product not found")
     
+    product = product_result.data[0]
     trust_score = product.get("trust_score", 75)
     badge_level = _get_badge_level(trust_score)
     
-    base_url = "https://ethaum.ai"  # Production URL
+    base_url = "https://ethaum.ai"
     
     return {
         "product": {
@@ -61,12 +52,13 @@ def get_badge_preview(product_id: int) -> HTMLResponse:
     """
     Get a visual HTML preview of the embeddable badge.
     """
-    from routers.products import DUMMY_PRODUCTS
+    db = get_db()
     
-    product = next((p for p in DUMMY_PRODUCTS if p["id"] == product_id), None)
-    if not product:
+    product_result = db.table("products").select("*").eq("id", product_id).execute()
+    if not product_result.data:
         raise HTTPException(status_code=404, detail="Product not found")
     
+    product = product_result.data[0]
     trust_score = product.get("trust_score", 75)
     badge_level = _get_badge_level(trust_score)
     badge_color = _get_badge_color(trust_score)
@@ -158,10 +150,10 @@ def _get_badge_level(score: int) -> str:
 def _get_badge_color(score: int) -> str:
     """Get badge color based on trust score."""
     if score >= 90:
-        return "#7c3aed"  # Violet
+        return "#7c3aed"
     elif score >= 80:
-        return "#10b981"  # Emerald
+        return "#10b981"
     elif score >= 70:
-        return "#3b82f6"  # Blue
+        return "#3b82f6"
     else:
-        return "#6b7280"  # Gray
+        return "#6b7280"

@@ -330,3 +330,70 @@ export async function getTrends(): Promise<Record<string, unknown> | null> {
         return null;
     }
 }
+
+// ========== USER MANAGEMENT ==========
+
+export type UserRole = 'founder' | 'buyer' | 'admin';
+
+export interface User {
+    id: string;
+    clerk_id: string;
+    email: string;
+    full_name: string | null;
+    avatar_url: string | null;
+    role: UserRole;
+    company_name: string | null;
+}
+
+export interface UserSync {
+    clerk_id: string;
+    email: string;
+    full_name?: string;
+    avatar_url?: string;
+    role?: UserRole;
+    company_name?: string;
+}
+
+export async function syncUser(userData: UserSync): Promise<User | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/users/sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData),
+        });
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+
+export async function getCurrentUser(clerkUserId: string): Promise<User | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/users/me`, {
+            headers: { 'X-Clerk-User-Id': clerkUserId },
+        });
+        if (!res.ok) return null;
+        return res.json();
+    } catch {
+        return null;
+    }
+}
+
+export async function updateUserProfile(
+    clerkUserId: string,
+    data: { full_name?: string; company_name?: string }
+): Promise<User | null> {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/users/me`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Clerk-User-Id': clerkUserId,
+            },
+            body: JSON.stringify(data),
+        });
+        return res.json();
+    } catch {
+        return null;
+    }
+}

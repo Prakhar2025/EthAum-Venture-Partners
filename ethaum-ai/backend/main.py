@@ -14,6 +14,7 @@ from routers import (
     badges,
     templates,
     analytics,
+    users,
 )
 
 app = FastAPI(
@@ -30,6 +31,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ========== USER MANAGEMENT ==========
+app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 
 # ========== CORE FEATURES ==========
 # Product Hunt Style

@@ -1,15 +1,12 @@
-"""EthAum AI - AI Matchmaking Router.
+"""EthAum AI - AI Matchmaking Router with Supabase Database.
 
 This router provides AI-powered buyer-startup matchmaking
 using explainable heuristics for enterprise acquisition.
-
-NOTE: This is an explainable AI heuristic for MVP demonstration.
 """
 
 from fastapi import APIRouter, HTTPException
-
+from database import get_db
 from services.matchmaking import match_buyers_to_startup
-from routers.products import DUMMY_PRODUCTS
 
 router = APIRouter()
 
@@ -23,21 +20,20 @@ def get_buyer_matches(product_id: int) -> dict:
     - Category-based matching (+40 points)
     - Trust score evaluation (+30 points)
     - Market traction assessment (+30 points)
-    
-    The algorithm provides transparent reasoning for each match,
-    enabling startups to understand why certain buyers are recommended.
     """
-    # Find the product
-    product = next((p for p in DUMMY_PRODUCTS if p["id"] == product_id), None)
-    if not product:
+    db = get_db()
+    
+    # Get product from database
+    result = db.table("products").select("*").eq("id", product_id).execute()
+    
+    if not result.data:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    # Get trust score and calculate market traction
-    trust_score = product.get("trust_score", 75)
+    product = result.data[0]
     
-    # Simulate market traction from trust score components
-    # In production, this would come from actual metrics
-    market_traction = min(100, trust_score - 10 + (product_id * 5))
+    # Get trust score and market traction from database
+    trust_score = product.get("trust_score", 75)
+    market_traction = product.get("market_traction", 70)
     
     # Run AI matchmaking
     matches = match_buyers_to_startup(

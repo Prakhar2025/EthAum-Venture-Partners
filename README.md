@@ -119,7 +119,9 @@ Pattern-based AI generates:
 |-------|------------|
 | **Frontend** | Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Recharts |
 | **Backend** | FastAPI (Python), Pydantic |
-| **State** | In-memory (MVP) |
+| **Database** | Supabase (PostgreSQL) |
+| **Authentication** | Clerk |
+| **Deployment** | Vercel (Frontend), Render (Backend) |
 
 ---
 

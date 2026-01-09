@@ -4,6 +4,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+    SignInButton,
+    SignUpButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+} from "@clerk/nextjs";
+import {
     Sparkles,
     Zap,
     Scale,
@@ -57,14 +64,30 @@ export function Header() {
                     ))}
                 </nav>
 
-                {/* Desktop CTA */}
+                {/* Desktop Auth Buttons */}
                 <div className="hidden items-center gap-3 lg:flex">
-                    <Button variant="outline" size="sm">
-                        Sign In
-                    </Button>
-                    <Button size="sm" className="bg-violet-600 hover:bg-violet-700">
-                        Get Started
-                    </Button>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <Button variant="outline" size="sm">
+                                Sign In
+                            </Button>
+                        </SignInButton>
+                        <SignUpButton mode="modal">
+                            <Button size="sm" className="bg-violet-600 hover:bg-violet-700">
+                                Get Started
+                            </Button>
+                        </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton
+                            afterSignOutUrl="/"
+                            appearance={{
+                                elements: {
+                                    avatarBox: "w-8 h-8",
+                                },
+                            }}
+                        />
+                    </SignedIn>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -97,12 +120,23 @@ export function Header() {
                             </Link>
                         ))}
                         <div className="mt-4 flex flex-col gap-2 border-t pt-4">
-                            <Button variant="outline" size="sm" className="w-full">
-                                Sign In
-                            </Button>
-                            <Button size="sm" className="w-full bg-violet-600 hover:bg-violet-700">
-                                Get Started
-                            </Button>
+                            <SignedOut>
+                                <SignInButton mode="modal">
+                                    <Button variant="outline" size="sm" className="w-full">
+                                        Sign In
+                                    </Button>
+                                </SignInButton>
+                                <SignUpButton mode="modal">
+                                    <Button size="sm" className="w-full bg-violet-600 hover:bg-violet-700">
+                                        Get Started
+                                    </Button>
+                                </SignUpButton>
+                            </SignedOut>
+                            <SignedIn>
+                                <div className="flex justify-center">
+                                    <UserButton afterSignOutUrl="/" />
+                                </div>
+                            </SignedIn>
                         </div>
                     </nav>
                 </div>
