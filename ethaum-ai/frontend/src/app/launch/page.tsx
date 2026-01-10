@@ -2,17 +2,22 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createLaunch } from "@/lib/api";
+import { useUser } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Rocket } from "lucide-react";
+import Link from "next/link";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function LaunchPage() {
+    const { user, isLoaded } = useUser();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [form, setForm] = useState({
         product_id: "",
         tagline: "",
@@ -21,24 +26,56 @@ export default function LaunchPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user) return;
+
         setLoading(true);
+        setError(null);
 
         try {
-            await createLaunch({
-                product_id: Number(form.product_id),
-                tagline: form.tagline,
-                description: form.description,
+            const response = await fetch(`${API_BASE}/api/v1/launches/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Clerk-User-Id": user.id,
+                },
+                body: JSON.stringify({
+                    product_id: Number(form.product_id),
+                }),
             });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.detail || "Failed to launch");
+            }
+
             setSuccess(true);
-            setTimeout(() => router.push("/marketplace"), 2000);
-        } catch (error) {
-            console.error("Launch failed:", error);
-            // Show success anyway for demo
-            setSuccess(true);
+            setTimeout(() => router.push("/leaderboard"), 2000);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
             setLoading(false);
         }
     };
+
+    if (!isLoaded) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="container mx-auto px-4 py-16 text-center">
+                <h1 className="text-2xl font-bold mb-4">Sign In Required</h1>
+                <p className="text-gray-600 mb-8">You need to sign in to launch your startup.</p>
+                <Link href="/">
+                    <Button>Go to Homepage</Button>
+                </Link>
+            </div>
+        );
+    }
 
     if (success) {
         return (
@@ -52,7 +89,7 @@ export default function LaunchPage() {
                             Launch Submitted!
                         </h2>
                         <p className="mt-2 text-gray-600">
-                            Your startup has been submitted. Redirecting to marketplace...
+                            Your startup is now on the leaderboard. Redirecting...
                         </p>
                     </CardContent>
                 </Card>
@@ -71,8 +108,7 @@ export default function LaunchPage() {
                         Launch Your Startup
                     </h1>
                     <p className="mt-2 text-gray-600">
-                        Submit your startup to the EthAum AI marketplace and start
-                        collecting upvotes.
+                        Add your product to the leaderboard and collect upvotes.
                     </p>
                 </div>
 
@@ -82,13 +118,19 @@ export default function LaunchPage() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
+                            {error && (
+                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                    {error}
+                                </div>
+                            )}
+
                             <div>
                                 <label className="mb-2 block text-sm font-medium text-gray-700">
                                     Product ID
                                 </label>
                                 <Input
                                     type="number"
-                                    placeholder="Enter your product ID"
+                                    placeholder="Enter your product ID (from My Products)"
                                     value={form.product_id}
                                     onChange={(e) =>
                                         setForm({ ...form, product_id: e.target.value })
@@ -96,35 +138,8 @@ export default function LaunchPage() {
                                     required
                                 />
                                 <p className="mt-1 text-xs text-gray-500">
-                                    The ID of your registered product in the system.
+                                    Find your product ID in <Link href="/my-products" className="text-violet-600 hover:underline">My Products</Link>
                                 </p>
-                            </div>
-
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
-                                    Tagline
-                                </label>
-                                <Input
-                                    placeholder="e.g., AI-powered analytics for growth teams"
-                                    value={form.tagline}
-                                    onChange={(e) => setForm({ ...form, tagline: e.target.value })}
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">
-                                    Description
-                                </label>
-                                <Textarea
-                                    placeholder="Tell us about your startup and why it deserves attention..."
-                                    rows={4}
-                                    value={form.description}
-                                    onChange={(e) =>
-                                        setForm({ ...form, description: e.target.value })
-                                    }
-                                    required
-                                />
                             </div>
 
                             <Button
@@ -132,7 +147,7 @@ export default function LaunchPage() {
                                 className="w-full bg-orange-600 hover:bg-orange-700"
                                 disabled={loading}
                             >
-                                {loading ? "Submitting..." : "Submit Launch"}
+                                {loading ? "Launching..." : "Launch to Leaderboard 🚀"}
                             </Button>
                         </form>
                     </CardContent>

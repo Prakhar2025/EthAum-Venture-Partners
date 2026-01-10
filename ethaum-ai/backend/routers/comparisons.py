@@ -2,71 +2,31 @@
 
 This router provides enterprise-focused startup comparisons
 with ROI metrics and integration capabilities.
-
-NOTE: This is MVP/Demo mode with in-memory data.
+Now fetches from database!
 """
 
 from fastapi import APIRouter, HTTPException
+from database import get_db
 
 router = APIRouter()
-
-# Comparison metrics data (demo mode)
-COMPARISON_METRICS = {
-    1: {  # NeuraTech
-        "name": "NeuraTech",
-        "category": "AI/ML",
-        "trust_score": 92,
-        "pricing_tier": "Enterprise",
-        "avg_implementation_days": 14,
-        "roi_percentage": 340,
-        "integration_count": 45,
-        "support_sla": "24/7 Priority",
-        "security_certifications": ["SOC2", "GDPR", "ISO27001"],
-        "key_features": ["Real-time Analytics", "Custom ML Models", "API-first"],
-        "ideal_for": "Large enterprises needing custom AI solutions",
-    },
-    2: {  # CloudSync
-        "name": "CloudSync",
-        "category": "DevOps",
-        "trust_score": 87,
-        "pricing_tier": "Growth",
-        "avg_implementation_days": 7,
-        "roi_percentage": 280,
-        "integration_count": 62,
-        "support_sla": "Business Hours",
-        "security_certifications": ["SOC2", "GDPR"],
-        "key_features": ["CI/CD Automation", "Multi-cloud", "GitOps"],
-        "ideal_for": "Tech teams modernizing DevOps workflows",
-    },
-    3: {  # FinLedger
-        "name": "FinLedger",
-        "category": "FinTech",
-        "trust_score": 78,
-        "pricing_tier": "Enterprise",
-        "avg_implementation_days": 30,
-        "roi_percentage": 420,
-        "integration_count": 28,
-        "support_sla": "24/7 Priority",
-        "security_certifications": ["SOC2", "PCI-DSS", "GDPR", "ISO27001"],
-        "key_features": ["Blockchain Audit", "Real-time Compliance", "Smart Contracts"],
-        "ideal_for": "Financial institutions requiring compliance automation",
-    },
-}
 
 
 @router.get("/")
 def get_all_comparisons() -> dict:
     """
-    Get all startups available for comparison.
+    Get all startups available for comparison from database.
     """
+    db = get_db()
+    result = db.table("products").select("id, name, category, trust_score").execute()
+    
     startups = [
         {
-            "id": pid,
-            "name": data["name"],
-            "category": data["category"],
-            "trust_score": data["trust_score"],
+            "id": product["id"],
+            "name": product["name"],
+            "category": product["category"],
+            "trust_score": product["trust_score"],
         }
-        for pid, data in COMPARISON_METRICS.items()
+        for product in (result.data or [])
     ]
     return {"startups": startups}
 
@@ -75,20 +35,49 @@ def get_all_comparisons() -> dict:
 def compare_startups(product_id_1: int, product_id_2: int) -> dict:
     """
     Compare two startups side-by-side with enterprise metrics.
-    
-    G2-Inspired comparison including:
-    - ROI metrics
-    - Integration capabilities
-    - Security certifications
-    - Implementation time
     """
-    if product_id_1 not in COMPARISON_METRICS:
+    db = get_db()
+    
+    # Get both products from database
+    result_1 = db.table("products").select("*").eq("id", product_id_1).execute()
+    result_2 = db.table("products").select("*").eq("id", product_id_2).execute()
+    
+    if not result_1.data:
         raise HTTPException(status_code=404, detail=f"Product {product_id_1} not found")
-    if product_id_2 not in COMPARISON_METRICS:
+    if not result_2.data:
         raise HTTPException(status_code=404, detail=f"Product {product_id_2} not found")
     
-    startup_1 = COMPARISON_METRICS[product_id_1]
-    startup_2 = COMPARISON_METRICS[product_id_2]
+    p1 = result_1.data[0]
+    p2 = result_2.data[0]
+    
+    # Generate comparison metrics (simulated for MVP)
+    startup_1 = {
+        "name": p1["name"],
+        "category": p1["category"],
+        "trust_score": p1["trust_score"],
+        "pricing_tier": "Enterprise",
+        "avg_implementation_days": 14,
+        "roi_percentage": 280 + (p1["trust_score"] * 2),
+        "integration_count": 30 + p1["market_traction"],
+        "support_sla": "24/7 Priority",
+        "security_certifications": ["SOC2", "GDPR"],
+        "key_features": ["Custom Solutions", "API-first", "Real-time"],
+        "ideal_for": f"Enterprises in {p1['category']} looking for trusted solutions",
+    }
+    
+    startup_2 = {
+        "name": p2["name"],
+        "category": p2["category"],
+        "trust_score": p2["trust_score"],
+        "pricing_tier": "Enterprise",
+        "avg_implementation_days": 14,
+        "roi_percentage": 280 + (p2["trust_score"] * 2),
+        "integration_count": 30 + p2["market_traction"],
+        "support_sla": "24/7 Priority",
+        "security_certifications": ["SOC2", "GDPR"],
+        "key_features": ["Custom Solutions", "API-first", "Real-time"],
+        "ideal_for": f"Enterprises in {p2['category']} looking for trusted solutions",
+    }
     
     # Calculate winner for each metric
     comparison_results = {

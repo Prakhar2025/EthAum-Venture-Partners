@@ -119,7 +119,21 @@ Pattern-based AI generates:
 |-------|------------|
 | **Frontend** | Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Recharts |
 | **Backend** | FastAPI (Python), Pydantic |
-| **State** | In-memory (MVP) |
+| **Database** | PostgreSQL (Supabase) |
+| **Authentication** | Clerk (with Supabase user sync) |
+| **Deployment** | Vercel (Frontend), Render (Backend) |
+
+---
+
+## 🔐 Phase 2 Features
+
+- **User Authentication** - Sign up/Sign in with Clerk
+- **Submit Startup** - Founders can add their own products
+- **My Products** - Dashboard to manage your startups
+- **Write Reviews** - Star ratings with sentiment analysis
+- **Upvote System** - Vote for products (1 per user)
+- **Leaderboard** - See top voted products
+- **Launch Page** - Add products to leaderboard
 
 ---
 
@@ -214,14 +228,17 @@ ethaum-ai/
 |------|-------|-------------|
 | Home | `/` | Landing page |
 | Marketplace | `/marketplace` | Browse all startups |
-| Product Detail | `/product/[id]` | Details + AI matchmaking |
+| Product Detail | `/product/[id]` | Details + AI matchmaking + Reviews |
 | Compare | `/compare` | Side-by-side comparison |
 | Deals | `/deals` | Enterprise pilot offers |
 | Insights | `/insights` | Gartner quadrant |
 | Analytics | `/analytics` | Trend dashboard |
 | Badges | `/badges` | Embeddable widgets |
 | Launch Wizard | `/wizard` | AI template generator |
-| Launch | `/launch` | Submit new launch |
+| Launch | `/launch` | Submit product to leaderboard |
+| Leaderboard | `/leaderboard` | Top products by upvotes |
+| Submit Startup | `/submit` | Add your startup |
+| My Products | `/my-products` | Manage your startups |
 
 ---
 

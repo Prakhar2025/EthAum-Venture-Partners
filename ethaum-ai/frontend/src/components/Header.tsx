@@ -19,17 +19,25 @@ import {
     Rocket,
     Menu,
     X,
+    Plus,
+    Package,
 } from "lucide-react";
 import { useState } from "react";
 
 const NAV_LINKS = [
     { href: "/marketplace", label: "Marketplace", icon: null },
+    { href: "/leaderboard", label: "Leaderboard", icon: TrendingUp, color: "text-orange-500", badge: "🔥" },
     { href: "/compare", label: "Compare", icon: Scale, color: "text-blue-500" },
-    { href: "/deals", label: "Deals", icon: Zap, color: "text-orange-500", badge: "HOT" },
+    { href: "/deals", label: "Deals", icon: Zap, color: "text-amber-500", badge: "HOT" },
     { href: "/insights", label: "Insights", icon: Sparkles, color: "text-violet-500" },
     { href: "/analytics", label: "Analytics", icon: TrendingUp, color: "text-emerald-500" },
     { href: "/badges", label: "Badges", icon: Award, color: "text-amber-500" },
     { href: "/wizard", label: "Launch Wizard", icon: Rocket, color: "text-pink-500", badge: "AI" },
+];
+
+const AUTH_LINKS = [
+    { href: "/submit", label: "Submit Startup", icon: Plus, color: "text-green-500" },
+    { href: "/my-products", label: "My Products", icon: Package, color: "text-violet-500" },
 ];
 
 export function Header() {
@@ -79,6 +87,16 @@ export function Header() {
                         </SignUpButton>
                     </SignedOut>
                     <SignedIn>
+                        {AUTH_LINKS.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+                            >
+                                <link.icon className={`h-3.5 w-3.5 ${link.color}`} />
+                                {link.label}
+                            </Link>
+                        ))}
                         <UserButton
                             afterSignOutUrl="/"
                             appearance={{

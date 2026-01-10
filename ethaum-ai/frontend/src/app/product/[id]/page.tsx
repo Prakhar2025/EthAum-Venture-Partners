@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { getProduct, getReviews, getBuyerMatches, Product, Review, MatchmakingResult } from "@/lib/api";
 import { TrustScoreBadge } from "@/components/TrustScoreBadge";
+import { ReviewForm } from "@/components/ReviewForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -210,7 +211,7 @@ export default function ProductDetailPage() {
                     {/* Reviews */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Reviews</CardTitle>
+                            <CardTitle>Reviews ({reviews.length})</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {reviews.length > 0 ? (
@@ -239,10 +240,19 @@ export default function ProductDetailPage() {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-gray-500">No reviews yet.</p>
+                                <p className="text-gray-500">No reviews yet. Be the first to review!</p>
                             )}
                         </CardContent>
                     </Card>
+
+                    {/* Write Review Form */}
+                    <ReviewForm
+                        productId={productId}
+                        onReviewSubmitted={() => {
+                            // Refresh reviews after submission
+                            getReviews(productId).then(setReviews);
+                        }}
+                    />
                 </div>
 
                 {/* Sidebar */}
