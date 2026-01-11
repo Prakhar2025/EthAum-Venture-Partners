@@ -1,9 +1,42 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Rocket, Star, BarChart3, Shield, TrendingUp, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { TrustScoreBadge } from "@/components/TrustScoreBadge";
+import { Rocket, Star, BarChart3, Shield, TrendingUp, Users, ArrowUp, Flame, Sparkles } from "lucide-react";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+interface TrendingProduct {
+  id: number;
+  name: string;
+  category: string;
+  trust_score: number;
+  upvotes: number;
+}
 
 export default function HomePage() {
+  const [trending, setTrending] = useState<TrendingProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTrending() {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/recommendations/trending`);
+        const data = await res.json();
+        setTrending(data.products || []);
+      } catch (error) {
+        console.error("Failed to fetch trending:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTrending();
+  }, []);
+
   return (
     <div>
       {/* Hero Section */}
@@ -34,12 +67,84 @@ export default function HomePage() {
                   Explore Marketplace
                 </Button>
               </Link>
-              <Link href="/launch">
+              <Link href="/submit">
                 <Button size="lg" variant="outline">
-                  Launch a Startup
+                  Submit Startup
                 </Button>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trending Section */}
+      <section className="py-16 bg-gradient-to-r from-orange-50 via-white to-orange-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+              <Flame className="h-5 w-5 text-orange-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">Trending Now</h2>
+            <Badge className="bg-orange-100 text-orange-700">🔥 Hot</Badge>
+          </div>
+
+          {loading ? (
+            <div className="text-center text-gray-500">Loading trending products...</div>
+          ) : trending.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-3 max-w-4xl mx-auto">
+              {trending.slice(0, 3).map((product, index) => (
+                <Link key={product.id} href={`/product/${product.id}`}>
+                  <Card className={`transition-all hover:shadow-lg hover:-translate-y-1 ${index === 0 ? "border-2 border-orange-300 bg-orange-50/30" : ""
+                    }`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`flex h-10 w-10 items-center justify-center rounded-lg font-bold text-white ${index === 0 ? "bg-gradient-to-br from-orange-500 to-red-500" :
+                              index === 1 ? "bg-gradient-to-br from-violet-500 to-indigo-500" :
+                                "bg-gradient-to-br from-blue-500 to-cyan-500"
+                            }`}>
+                            {product.name.charAt(0)}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                            <p className="text-sm text-gray-500">{product.category}</p>
+                          </div>
+                        </div>
+                        <TrustScoreBadge score={product.trust_score} size="sm" />
+                      </div>
+                      <div className="mt-3 flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-orange-600">
+                          <ArrowUp className="h-4 w-4" />
+                          <span className="font-semibold">{product.upvotes}</span>
+                          <span className="text-sm text-gray-500">upvotes</span>
+                        </div>
+                        {index === 0 && (
+                          <Badge className="bg-yellow-100 text-yellow-700">
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            #1 Today
+                          </Badge>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500">
+              <p>No trending products yet.</p>
+              <Link href="/submit" className="text-violet-600 hover:underline">
+                Be the first to submit!
+              </Link>
+            </div>
+          )}
+
+          <div className="text-center mt-6">
+            <Link href="/leaderboard">
+              <Button variant="outline">
+                View Full Leaderboard →
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -103,7 +208,7 @@ export default function HomePage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <BarChart3 className="h-4 w-4 text-emerald-500" />
-                    Sentiment scoring
+                    AI sentiment scoring
                   </li>
                 </ul>
               </CardContent>
@@ -148,9 +253,9 @@ export default function HomePage() {
             Join 500+ startups building credibility with EthAum AI.
           </p>
           <div className="mt-8">
-            <Link href="/launch">
+            <Link href="/submit">
               <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
-                Launch Your Startup Today
+                Submit Your Startup Today
               </Button>
             </Link>
           </div>

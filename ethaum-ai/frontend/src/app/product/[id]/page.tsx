@@ -314,6 +314,65 @@ export default function ProductDetailPage() {
                     )}
                 </div>
             </div>
+
+            {/* Similar Products */}
+            <SimilarProducts productId={productId} />
+        </div>
+    );
+}
+
+function SimilarProducts({ productId }: { productId: number }) {
+    const [similar, setSimilar] = useState<{ id: number; name: string; category: string; trust_score: number; similarity_score: number }[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchSimilar() {
+            try {
+                const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                const res = await fetch(`${API_BASE}/api/v1/recommendations/similar/${productId}`);
+                const data = await res.json();
+                setSimilar(data.products || []);
+            } catch (error) {
+                console.error("Failed to fetch similar products:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchSimilar();
+    }, [productId]);
+
+    if (loading) return null;
+    if (similar.length === 0) return null;
+
+    return (
+        <div className="mt-12">
+            <div className="flex items-center gap-2 mb-6">
+                <Sparkles className="h-5 w-5 text-violet-600" />
+                <h2 className="text-xl font-bold text-gray-900">You Might Also Like</h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+                {similar.slice(0, 3).map((product) => (
+                    <a key={product.id} href={`/product/${product.id}`}>
+                        <Card className="transition-all hover:shadow-lg hover:-translate-y-1">
+                            <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-violet-100 to-indigo-100 font-bold text-violet-600">
+                                        {product.name.charAt(0)}
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                                        <p className="text-sm text-gray-500">{product.category}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-lg font-bold text-violet-600">{product.trust_score}</div>
+                                        <div className="text-xs text-gray-400">{product.similarity_score}% match</div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </a>
+                ))}
+            </div>
         </div>
     );
 }

@@ -15,12 +15,13 @@ from routers import (
     templates,
     analytics,
     users,
+    recommendations,
 )
 
 app = FastAPI(
     title="EthAum AI",
     description="AI-Powered SaaS Marketplace for Series A-D Startups - Product Hunt + G2 + Gartner + AppSumo",
-    version="1.0.0",
+    version="2.0.0",
 )
 
 # Enable CORS for frontend integration
@@ -53,6 +54,9 @@ app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytic
 # AppSumo Style
 app.include_router(deals.router, prefix="/api/v1/deals", tags=["Enterprise Deals"])
 app.include_router(matchmaking.router, prefix="/api/v1/matchmaking", tags=["AI Matchmaking"])
+
+# AI Recommendations (Phase 3)
+app.include_router(recommendations.router, prefix="/api/v1/recommendations", tags=["Smart Recommendations"])
 
 
 @app.get("/", tags=["Health"])
