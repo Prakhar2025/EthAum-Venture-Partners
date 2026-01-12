@@ -16,6 +16,7 @@ from routers import (
     analytics,
     users,
     recommendations,
+    admin,
 )
 
 app = FastAPI(
@@ -58,9 +59,13 @@ app.include_router(matchmaking.router, prefix="/api/v1/matchmaking", tags=["AI M
 # AI Recommendations (Phase 3)
 app.include_router(recommendations.router, prefix="/api/v1/recommendations", tags=["Smart Recommendations"])
 
+# Admin Dashboard (Phase 4)
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin Dashboard"])
+
 
 @app.get("/", tags=["Health"])
 def health_check() -> dict:
     """Health check endpoint."""
-    return {"status": "ok", "service": "ethaum-ai", "version": "1.0.0"}
+    return {"status": "ok", "service": "ethaum-ai", "version": "2.0.0"}
+
 

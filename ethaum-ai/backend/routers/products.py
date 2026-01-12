@@ -43,6 +43,7 @@ def create_product(
         "market_traction": 70,
         "user_sentiment": 70,
         "user_id": user["id"],
+        "status": "pending",  # New products require admin approval
     }).execute()
     
     if result.data:
@@ -63,11 +64,11 @@ def create_product(
 
 @router.get("/", response_model=list[dict])
 def list_products() -> list[dict]:
-    """List all startups with basic info."""
+    """List all approved startups for marketplace."""
     db = get_db()
     result = db.table("products").select(
-        "id, name, trust_score, category, funding_stage, website, description, user_id"
-    ).execute()
+        "id, name, trust_score, category, funding_stage, website, description, user_id, status"
+    ).eq("status", "approved").execute()
     return result.data if result.data else []
 
 
