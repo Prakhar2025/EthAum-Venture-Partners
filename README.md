@@ -18,7 +18,7 @@ Combining Product Hunt + G2 + Gartner + AppSumo into one unified platform with A
 
 ## 🎥 Demo Video
 
-[![Watch Demo](https://img.shields.io/badge/YouTube-Demo_Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/KPuu3hIaQIY)
+[![Watch Demo](https://img.shields.io/badge/YouTube-Demo_Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/THzxjc94RHc)
 
 ---
 
