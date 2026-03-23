@@ -1,0 +1,59 @@
+# EthAum.ai — Cursor Rules
+
+## Project Overview
+AI-powered SaaS marketplace (Product Hunt + G2 + Gartner + AppSumo) for Series A-D startups.
+
+## Tech Stack
+- **Frontend:** Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Recharts
+- **Backend:** FastAPI, Python 3.9+, Pydantic v2
+- **Database:** Supabase (PostgreSQL via `postgrest-py`)
+- **Auth:** Clerk (`X-Clerk-User-Id` header)
+
+## Project Structure
+```
+/frontend/src/app         → Next.js pages (App Router)
+/frontend/src/components  → Reusable React components
+/backend/routers          → FastAPI route handlers
+/backend/schemas          → Pydantic request/response models
+/backend/services         → Business logic (AI scoring, sentiment)
+/backend/models           → Supabase DB interfaces
+```
+
+## Frontend Rules (Next.js)
+- ALWAYS use absolute imports: `@/components/`, `@/app/`, `@/lib/`
+- NEVER use `pages/` directory — this project uses App Router only
+- ALWAYS use `"use client"` directive for components with hooks or browser APIs
+- ALWAYS use `async/await` in Server Components for data fetching
+- NEVER use `axios` — use native `fetch()` with `NEXT_PUBLIC_API_URL`
+- ALWAYS use Tailwind CSS for styling — no inline styles, no CSS modules
+- ALWAYS use `shadcn/ui` components before creating custom ones
+- ALWAYS handle loading and error states in every page component
+
+## Backend Rules (FastAPI)
+- ALWAYS extract auth from `request.headers.get("X-Clerk-User-Id")`
+- ALWAYS return `{"detail": "Unauthorized"}` with `status_code=401` if no user ID
+- ALWAYS use Pydantic schemas for request body validation
+- NEVER use SQLAlchemy or Prisma — ONLY use the Supabase Python client (`from database import supabase`)
+- ALWAYS use `supabase.table("table_name").select("*").execute()` pattern
+- NEVER write raw SQL strings unless absolutely necessary
+- ALWAYS prefix API routes with `/api/v1/`
+- ALWAYS wrap DB calls in try/except and return meaningful error messages
+
+## Database Rules (Supabase)
+- NEVER import or use SQLAlchemy, Prisma, or any ORM
+- ALWAYS use the singleton `supabase` client from `backend/database.py`
+- Table names: `products`, `users`, `reviews`, `launches`, `upvotes`, `deals`, `pilot_requests`
+- `users` table uses `clerk_id` as the primary user identifier (NOT numeric IDs)
+
+## AI Features
+- Trust Score = weighted average of: upvotes (40%), reviews/sentiment (35%), data integrity (25%)
+- Sentiment analysis is keyword-based (no external API) — in `backend/services/sentiment.py`
+- Dynamic trust score recalculation is in `backend/services/scoring.py`
+
+## Do NOT
+- Use `react-router-dom` (Next.js handles routing)
+- Use `axios` (use `fetch`)
+- Use any ORM (use Supabase client)
+- Create new DB connection in routers (import from `database.py`)
+- Use `useState` in Server Components
+- Expose `.env` values without `NEXT_PUBLIC_` prefix in frontend
