@@ -17,6 +17,7 @@ from routers import (
     users,
     recommendations,
     admin,
+    onboarding,
 )
 
 app = FastAPI(
@@ -61,6 +62,15 @@ app.include_router(recommendations.router, prefix="/api/v1/recommendations", tag
 
 # Admin Dashboard (Phase 4)
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin Dashboard"])
+
+# ====================================================================
+# PHASE 1 — Healthcare Marketplace Pivot: Role-Based Auth & Onboarding
+# ====================================================================
+app.include_router(
+    onboarding.router,
+    prefix="/api/v1/onboarding",
+    tags=["Onboarding (Phase 1)"],
+)
 
 
 @app.get("/", tags=["Health"])
