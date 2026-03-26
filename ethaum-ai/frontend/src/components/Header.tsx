@@ -34,6 +34,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 // Primary navigation links
 const PRIMARY_LINKS = [
     { href: "/marketplace", label: "Marketplace" },
+    { href: "/challenges", label: "Challenges", badge: "⚡" },
     { href: "/leaderboard", label: "Leaderboard", badge: "🔥" },
     { href: "/compare", label: "Compare" },
 ];
