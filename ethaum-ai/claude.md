@@ -1,5 +1,7 @@
 # Claude Instructions — EthAum.ai
 
+-Codex will review your output when you are done
+
 ## Project Context
 EthAum.ai is a full-stack AI SaaS marketplace. A solo-developer project (~7,000 lines of code, 50+ API endpoints). All four build phases are complete.
 
