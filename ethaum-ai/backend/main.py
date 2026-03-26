@@ -18,6 +18,7 @@ from routers import (
     recommendations,
     admin,
     onboarding,
+    challenges,
 )
 
 app = FastAPI(
@@ -72,10 +73,19 @@ app.include_router(
     tags=["Onboarding (Phase 1)"],
 )
 
+# ====================================================================
+# PHASE 3 — Challenge Board (Agorize-style)
+# ====================================================================
+app.include_router(
+    challenges.router,
+    prefix="/api/v1/challenges",
+    tags=["Challenge Board (Phase 3)"],
+)
+
 
 @app.get("/", tags=["Health"])
 def health_check() -> dict:
     """Health check endpoint."""
-    return {"status": "ok", "service": "ethaum-ai", "version": "2.0.0"}
+    return {"status": "ok", "service": "ethaum-ai", "version": "3.0.0"}
 
 
