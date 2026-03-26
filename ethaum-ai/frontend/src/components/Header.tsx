@@ -27,6 +27,8 @@ import {
     BarChart3,
     ChevronDown,
     LayoutDashboard,
+    MessageSquare,
+    Heart,
 } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -208,6 +210,20 @@ export function Header() {
                             </Link>
                         )}
 
+                        <Link
+                            href="/messages"
+                            className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                            <MessageSquare className="h-4 w-4 text-blue-500" />
+                            Messages
+                        </Link>
+                        <Link
+                            href="/dashboard/watchlist"
+                            className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                            <Heart className="h-4 w-4 text-pink-400" />
+                            Watchlist
+                        </Link>
                         <UserButton
                             afterSignOutUrl="/"
                             appearance={{ elements: { avatarBox: "h-8 w-8" } }}
@@ -261,6 +277,12 @@ export function Header() {
                                 </Link>
                                 <Link href="/my-products" className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
                                     My Products
+                                </Link>
+                                <Link href="/messages" className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
+                                    Messages
+                                </Link>
+                                <Link href="/dashboard/watchlist" className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
+                                    Watchlist
                                 </Link>
                                 {isAdmin && (
                                     <Link href="/admin" className="block rounded-md px-3 py-2 text-sm font-medium text-violet-700 hover:bg-violet-50" onClick={() => setMobileMenuOpen(false)}>
