@@ -19,6 +19,8 @@ from routers import (
     admin,
     onboarding,
     challenges,
+    messages,
+    watchlist,
 )
 
 app = FastAPI(
@@ -82,10 +84,24 @@ app.include_router(
     tags=["Challenge Board (Phase 3)"],
 )
 
+# ====================================================================
+# PHASE 4 — Messaging + Watchlist + Notifications
+# ====================================================================
+app.include_router(
+    messages.router,
+    prefix="/api/v1/messages",
+    tags=["Messaging (Phase 4)"],
+)
+app.include_router(
+    watchlist.router,
+    prefix="/api/v1/watchlist",
+    tags=["Watchlist (Phase 4)"],
+)
+
 
 @app.get("/", tags=["Health"])
 def health_check() -> dict:
     """Health check endpoint."""
-    return {"status": "ok", "service": "ethaum-ai", "version": "3.0.0"}
+    return {"status": "ok", "service": "ethaum-ai", "version": "4.0.0"}
 
 
