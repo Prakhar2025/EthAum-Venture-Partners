@@ -7,6 +7,19 @@ export interface Product {
     category: string;
     funding_stage: string;
     trust_score: number;
+    description?: string;
+    // V2 healthcare depth fields
+    vertical?: string;
+    healthcare_category?: string;
+    compliance?: string[];
+    revenue_stage?: string;
+    geography?: string[];
+    team_size?: string;
+    total_funding?: string;
+    linkedin_url?: string;
+    pitch_deck_url?: string;
+    demo_video_url?: string;
+    integrations?: string[];
     score_breakdown?: {
         data_integrity: number;
         market_traction: number;
@@ -18,6 +31,19 @@ export interface Product {
         rank: number;
     };
 }
+
+// ─── Phase 2: Filter params ───────────────────────────────────────────────────
+export interface ProductFilters {
+    vertical?: string;
+    healthcare_category?: string[];
+    compliance?: string[];
+    revenue_stage?: string[];
+    geography?: string[];
+    trust_score_min?: number;
+    sort?: "trust_score" | "latest" | "name";
+    search?: string;
+}
+
 
 export interface Launch {
     id: number;
@@ -45,6 +71,20 @@ export interface QuadrantData {
 // Products
 export async function getProducts(): Promise<Product[]> {
     const res = await fetch(`${API_BASE}/api/v1/products`);
+    return res.json();
+}
+
+export async function getFilteredProducts(filters: ProductFilters): Promise<Product[]> {
+    const params = new URLSearchParams();
+    if (filters.vertical)         params.set("vertical", filters.vertical);
+    if (filters.healthcare_category?.length) params.set("healthcare_category", filters.healthcare_category.join(","));
+    if (filters.compliance?.length) params.set("compliance", filters.compliance.join(","));
+    if (filters.revenue_stage?.length) params.set("revenue_stage", filters.revenue_stage.join(","));
+    if (filters.geography?.length)  params.set("geography", filters.geography.join(","));
+    if (filters.trust_score_min !== undefined) params.set("trust_score_min", String(filters.trust_score_min));
+    if (filters.sort)              params.set("sort", filters.sort);
+    if (filters.search)            params.set("search", filters.search);
+    const res = await fetch(`${API_BASE}/api/v1/products?${params.toString()}`);
     return res.json();
 }
 
