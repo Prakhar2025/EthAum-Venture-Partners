@@ -26,6 +26,7 @@ import {
     Award,
     BarChart3,
     ChevronDown,
+    LayoutDashboard,
 } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -51,26 +52,42 @@ export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [toolsOpen, setToolsOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [roleV2, setRoleV2] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Check if user is admin
+    // Check admin status + fetch role_v2 for Dashboard link
     useEffect(() => {
-        async function checkAdmin() {
+        async function fetchUserInfo() {
             if (!user) {
                 setIsAdmin(false);
+                setRoleV2(null);
                 return;
             }
             try {
-                const res = await fetch(`${API_BASE}/api/v1/admin/stats`, {
-                    headers: { "X-Clerk-User-Id": user.id },
-                });
-                setIsAdmin(res.ok);
+                const [adminRes, meRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/v1/admin/stats`, {
+                        headers: { "X-Clerk-User-Id": user.id },
+                    }),
+                    fetch(`${API_BASE}/api/v1/users/me`, {
+                        headers: { "X-Clerk-User-Id": user.id },
+                    }),
+                ]);
+                setIsAdmin(adminRes.ok);
+                if (meRes.ok) {
+                    const data = await meRes.json();
+                    setRoleV2(data.role_v2 ?? null);
+                }
             } catch {
                 setIsAdmin(false);
             }
         }
-        checkAdmin();
+        fetchUserInfo();
     }, [user]);
+
+    const dashboardHref =
+        roleV2 && roleV2 !== "admin"
+            ? `/dashboard/${roleV2}`
+            : "/onboarding";
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -156,6 +173,14 @@ export function Header() {
                     </SignedOut>
 
                     <SignedIn>
+                        {/* Dashboard — role-aware */}
+                        <Link
+                            href={dashboardHref}
+                            className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                            <LayoutDashboard className="h-4 w-4 text-violet-500" />
+                            Dashboard
+                        </Link>
                         <Link
                             href="/submit"
                             className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
@@ -227,6 +252,9 @@ export function Header() {
 
                         <SignedIn>
                             <div className="border-t pt-2 mt-2">
+                                <Link href={dashboardHref} className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
+                                    Dashboard
+                                </Link>
                                 <Link href="/submit" className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
                                     Submit Startup
                                 </Link>
