@@ -21,6 +21,7 @@ from routers import (
     challenges,
     messages,
     watchlist,
+    payments,
 )
 
 app = FastAPI(
@@ -98,10 +99,19 @@ app.include_router(
     tags=["Watchlist (Phase 4)"],
 )
 
+# ====================================================================
+# PHASE 5 — Stripe Payments & Subscriptions
+# ====================================================================
+app.include_router(
+    payments.router,
+    prefix="/api/v1/payments",
+    tags=["Payments & Subscriptions (Phase 5)"],
+)
+
 
 @app.get("/", tags=["Health"])
 def health_check() -> dict:
     """Health check endpoint."""
-    return {"status": "ok", "service": "ethaum-ai", "version": "4.0.0"}
+    return {"status": "ok", "service": "ethaum-ai", "version": "5.0.0"}
 
 
