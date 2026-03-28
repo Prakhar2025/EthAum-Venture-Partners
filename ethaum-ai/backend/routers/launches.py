@@ -1,11 +1,129 @@
-"""EthAum AI - Launches Router with Supabase Database and Real Upvotes."""
+"""EthAum AI — Launches Router (Phase 7 Upgrade).
 
+Changelog (Phase 7):
+    - POST /generate-tagline — AI-powered launch tagline generator (Groq LLaMA).
+      Input: product name, description, healthcare_category.
+      Output: 3 tagline options ranked by strength.
+
+All Phase 1 launch / upvote / leaderboard routes PRESERVED unchanged.
+"""
+
+import logging
+import os
 from fastapi import APIRouter, HTTPException, Header
 from typing import Optional
+from pydantic import BaseModel
 from database import get_db
 from schemas.launch import LaunchCreate, LaunchResponse
 
+log = logging.getLogger(__name__)
 router = APIRouter()
+
+
+# ─── TAGLINE GENERATOR ────────────────────────────────────────────────────────
+
+class TaglineRequest(BaseModel):
+    product_id: int | None = None   # optional — can pass raw strings too
+    name: str
+    description: str
+    category: str | None = None
+
+
+class TaglineResponse(BaseModel):
+    taglines: list[str]
+    engine: str
+
+
+def _call_groq_taglines(name: str, description: str, category: str) -> list[str]:
+    """Call Groq LLaMA to generate 3 launch taglines. Raises on failure."""
+    key = os.getenv("GROQ_API_KEY", "")
+    if not key:
+        raise RuntimeError("GROQ_API_KEY not set")
+
+    from groq import Groq
+    client = Groq(api_key=key)
+
+    prompt = (
+        f"You are a Product Hunt launch copywriter specialising in healthcare B2B SaaS.\n\n"
+        f"Product: {name}\n"
+        f"Category: {category or 'Healthcare AI'}\n"
+        f"Description: {description[:600]}\n\n"
+        f"Write exactly 3 punchy launch taglines. Each tagline must:\n"
+        f"- Be under 12 words\n"
+        f"- Start with a strong verb or compelling hook\n"
+        f"- Highlight the core healthcare problem solved\n"
+        f"- Be distinct from the others in angle/tone\n\n"
+        f"Return ONLY the 3 taglines, one per line. No numbering, no explanation."
+    )
+
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=120,
+        temperature=0.8,
+    )
+
+    raw = response.choices[0].message.content.strip()
+    lines = [line.strip().lstrip("•-–1234567890. ") for line in raw.splitlines() if line.strip()]
+    return lines[:3]
+
+
+@router.post("/generate-tagline", response_model=TaglineResponse)
+def generate_tagline(
+    body: TaglineRequest,
+    x_clerk_user_id: Optional[str] = Header(None),
+) -> TaglineResponse:
+    """Generate 3 AI-powered launch taglines for a startup (Groq LLaMA).
+
+    Auth required. Available on all plans — tagline generation is a free feature.
+    If Groq is unavailable, returns 3 template-based fallback taglines so the
+    startup is never left without options.
+    """
+    if not x_clerk_user_id:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    # Enrich with product data if product_id is provided
+    name        = body.name
+    description = body.description
+    category    = body.category or ""
+
+    if body.product_id:
+        db = get_db()
+        p_result = db.table("products").select(
+            "name, description, healthcare_category, tagline"
+        ).eq("id", body.product_id).execute()
+        if p_result.data:
+            p = p_result.data[0]
+            name        = name        or p.get("name", "")
+            description = description or p.get("description") or p.get("tagline") or ""
+            category    = category    or p.get("healthcare_category") or ""
+
+    if not name or not description:
+        raise HTTPException(
+            status_code=422,
+            detail="Both 'name' and 'description' are required to generate taglines.",
+        )
+
+    # ── Try Groq ──────────────────────────────────────────────────────────────
+    try:
+        taglines = _call_groq_taglines(name, description, category)
+        if len(taglines) < 3:
+            raise ValueError("Insufficient taglines returned")
+        log.info(f"[tagline] groq generated {len(taglines)} taglines for '{name}'")
+        return TaglineResponse(taglines=taglines, engine="groq_llm")
+    except Exception as e:
+        log.warning(f"[tagline] Groq failed ({e}) — using template fallback")
+
+    # ── Template fallback (never fails) ───────────────────────────────────────
+    cat_label = (category or "Healthcare").replace("_", " ").title()
+    fallback = [
+        f"The smarter way to manage {cat_label}",
+        f"Transform {cat_label} with AI-powered insights",
+        f"Trusted by enterprise teams in {cat_label}",
+    ]
+    return TaglineResponse(taglines=fallback, engine="keyword_fallback")
+
+
 
 
 @router.post("/", response_model=LaunchResponse)
