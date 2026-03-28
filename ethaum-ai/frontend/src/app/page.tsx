@@ -89,7 +89,30 @@ export default function HomePage() {
           </div>
 
           {loading ? (
-            <div className="text-center text-gray-500">Loading trending products...</div>
+            /* ── Trending skeleton — 3 cards matching ProductCard shape ── */
+            <div className="grid gap-4 md:grid-cols-3 max-w-4xl mx-auto">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className={`animate-pulse rounded-xl border-2 bg-white p-4 ${i === 0 ? "border-orange-200" : "border-gray-100"}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`h-10 w-10 rounded-lg ${i === 0 ? "bg-orange-200" : i === 1 ? "bg-violet-200" : "bg-blue-200"}`} />
+                      <div className="space-y-2">
+                        <div className="h-4 w-28 rounded-full bg-gray-200" />
+                        <div className="h-3 w-20 rounded-full bg-gray-100" />
+                      </div>
+                    </div>
+                    <div className="h-8 w-12 rounded-full bg-gray-200" />
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="h-4 w-16 rounded-full bg-gray-100" />
+                    {i === 0 && <div className="h-4 w-14 rounded-full bg-yellow-100" />}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : trending.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-3 max-w-4xl mx-auto">
               {trending.slice(0, 3).map((product, index) => (

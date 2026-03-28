@@ -14,7 +14,6 @@ import {
     ExternalLink,
     ArrowUp,
     TrendingUp,
-    Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { TrustScoreBadge } from "@/components/TrustScoreBadge";
@@ -445,8 +444,32 @@ export default function MarketplacePage() {
                     {/* Products list */}
                     <div className="flex-1 min-w-0">
                         {loading ? (
-                            <div className="flex items-center justify-center py-20">
-                                <Loader2 className="h-6 w-6 animate-spin text-violet-600" />
+                            /* ── Skeleton product cards ──────────────────────── */
+                            <div className="space-y-3">
+                                {Array.from({ length: 6 }).map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm animate-pulse"
+                                    >
+                                        {/* Logo skeleton */}
+                                        <div className="h-12 w-12 flex-shrink-0 rounded-xl bg-gray-200" />
+                                        {/* Content skeleton */}
+                                        <div className="flex-1 space-y-2">
+                                            <div className="h-4 w-2/5 rounded-full bg-gray-200" />
+                                            <div className="flex gap-2">
+                                                <div className="h-3 w-20 rounded-full bg-gray-100" />
+                                                <div className="h-3 w-16 rounded-full bg-gray-100" />
+                                                <div className="h-3 w-14 rounded-full bg-gray-100" />
+                                            </div>
+                                            <div className="h-3 w-3/5 rounded-full bg-gray-100" />
+                                        </div>
+                                        {/* Score skeleton */}
+                                        <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                                            <div className="h-8 w-14 rounded-full bg-gray-200" />
+                                            <div className="h-3 w-8 rounded-full bg-gray-100" />
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         ) : products.length === 0 ? (
                             <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center">

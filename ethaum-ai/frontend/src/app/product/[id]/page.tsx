@@ -169,7 +169,71 @@ export default function ProductDetailPage() {
         fetchData();
     }, [productId]);
 
-    if (loading) return <div className="container mx-auto px-4 py-12 text-center text-gray-500">Loading…</div>;
+    if (loading) return (
+        /* ── Product page skeleton ─────────────────────────────────────────── */
+        <div className="container mx-auto px-4 py-12 animate-pulse">
+            {/* Header skeleton */}
+            <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                <div className="flex items-start gap-4">
+                    <div className="h-16 w-16 flex-shrink-0 rounded-xl bg-gray-200" />
+                    <div className="space-y-3 pt-1">
+                        <div className="h-7 w-48 rounded-full bg-gray-200" />
+                        <div className="flex gap-2">
+                            <div className="h-5 w-20 rounded-full bg-gray-100" />
+                            <div className="h-5 w-16 rounded-full bg-gray-100" />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="h-12 w-20 rounded-2xl bg-gray-200" />
+                    <div className="h-10 w-32 rounded-xl bg-gray-100" />
+                </div>
+            </div>
+
+            {/* Body skeleton */}
+            <div className="grid gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Card 1 */}
+                    <div className="rounded-xl border border-gray-100 bg-white p-6 space-y-3">
+                        <div className="h-5 w-24 rounded-full bg-gray-200" />
+                        <div className="space-y-2">
+                            <div className="h-3 w-full rounded-full bg-gray-100" />
+                            <div className="h-3 w-5/6 rounded-full bg-gray-100" />
+                            <div className="h-3 w-4/6 rounded-full bg-gray-100" />
+                        </div>
+                    </div>
+                    {/* Card 2 */}
+                    <div className="rounded-xl border border-gray-100 bg-white p-6 space-y-4">
+                        <div className="h-5 w-40 rounded-full bg-gray-200" />
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="space-y-1.5">
+                                <div className="flex justify-between">
+                                    <div className="h-3 w-28 rounded-full bg-gray-100" />
+                                    <div className="h-3 w-8 rounded-full bg-gray-100" />
+                                </div>
+                                <div className="h-2 w-full rounded-full bg-gray-100" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                {/* Sidebar skeleton */}
+                <div className="space-y-4">
+                    <div className="rounded-xl border border-gray-100 bg-white p-6">
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="h-20 w-20 rounded-full bg-gray-200" />
+                            <div className="h-4 w-28 rounded-full bg-gray-200" />
+                            <div className="h-3 w-36 rounded-full bg-gray-100" />
+                        </div>
+                    </div>
+                    <div className="rounded-xl border border-gray-100 bg-white p-6 space-y-2">
+                        <div className="h-4 w-24 rounded-full bg-gray-200" />
+                        <div className="h-3 w-full rounded-full bg-gray-100" />
+                        <div className="h-3 w-3/4 rounded-full bg-gray-100" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
     if (!product)  return <div className="container mx-auto px-4 py-12 text-center text-gray-500">Product not found.</div>;
 
     const hasHealthcareData =
@@ -183,13 +247,13 @@ export default function ProductDetailPage() {
     return (
         <div className="container mx-auto px-4 py-12">
             {/* ── HEADER ─────────────────────────────────────────────────── */}
-            <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <div className="mb-8 flex flex-col gap-4">
                 <div className="flex items-start gap-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 text-2xl font-bold text-violet-600 flex-shrink-0">
+                    <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 text-xl sm:text-2xl font-bold text-violet-600">
                         {product.name.charAt(0)}
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+                    <div className="flex-1 min-w-0">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">{product.name}</h1>
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                             <Badge>{product.category}</Badge>
                             <Badge variant="outline">{product.funding_stage}</Badge>
@@ -219,9 +283,9 @@ export default function ProductDetailPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                     <TrustScoreBadge score={product.trust_score} size="lg" />
-                    <Button asChild>
+                    <Button asChild className="w-full sm:w-auto">
                         <a href={product.website} target="_blank" rel="noopener noreferrer">
                             Visit Website <ExternalLink className="ml-2 h-4 w-4" />
                         </a>
