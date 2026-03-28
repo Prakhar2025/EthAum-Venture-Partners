@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import {
@@ -32,7 +32,7 @@ interface GeneratedReport {
     generatedAt: Date;
 }
 
-export default function InvestorReportsPage() {
+function InvestorReportsContent() {
     const { user }       = useUser();
     const searchParams   = useSearchParams();
     const preselectedId  = searchParams.get("product");
@@ -312,5 +312,13 @@ export default function InvestorReportsPage() {
 
             </div>
         </div>
+    );
+}
+
+export default function InvestorReportsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#0A0B14] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-emerald-500" /></div>}>
+            <InvestorReportsContent />
+        </Suspense>
     );
 }
