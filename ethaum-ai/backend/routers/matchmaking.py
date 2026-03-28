@@ -1,7 +1,7 @@
-"""EthAum AI - AI Matchmaking Router with Supabase Database.
+"""EthAum AI — AI Matchmaking Router (Phase 7 Upgrade).
 
-This router provides AI-powered buyer-startup matchmaking
-using explainable heuristics for enterprise acquisition.
+Phase 7: Passes compliance and geography from Phase 2 V2 product fields
+into the upgraded scoring model.
 """
 
 from fastapi import APIRouter, HTTPException
@@ -15,48 +15,56 @@ router = APIRouter()
 def get_buyer_matches(product_id: int) -> dict:
     """
     Get AI-recommended enterprise buyers for a startup.
-    
-    This endpoint demonstrates EXPLAINABLE AI MATCHMAKING:
-    - Category-based matching (+40 points)
-    - Trust score evaluation (+30 points)
-    - Market traction assessment (+30 points)
+
+    Phase 7 scoring model (4 factors, sum to 100):
+        - Healthcare category alignment (40%)
+        - Compliance certification overlap  (30%)
+        - Geographic market overlap         (20%)
+        - Trust Score credibility           (10%)
     """
     db = get_db()
-    
-    # Get product from database
+
     result = db.table("products").select("*").eq("id", product_id).execute()
-    
+
     if not result.data:
         raise HTTPException(status_code=404, detail="Product not found")
-    
+
     product = result.data[0]
-    
-    # Get trust score and market traction from database
-    trust_score = product.get("trust_score", 75)
+
+    trust_score     = product.get("trust_score", 75)
     market_traction = product.get("market_traction", 70)
-    
-    # Run AI matchmaking
+
+    # Phase 7: use healthcare_category + V2 compliance/geography arrays
+    healthcare_cat = product.get("healthcare_category") or product.get("category", "")
+    compliance     = product.get("compliance") or []
+    geography      = product.get("geography") or []
+
     matches = match_buyers_to_startup(
-        category=product.get("category", "AI/ML"),
+        category=healthcare_cat,
         trust_score=trust_score,
         market_traction=market_traction,
+        compliance=compliance,
+        geography=geography,
     )
-    
+
     return {
         "startup": {
-            "id": product["id"],
-            "name": product["name"],
-            "category": product.get("category", "AI/ML"),
-            "trust_score": trust_score,
+            "id":                  product["id"],
+            "name":                product["name"],
+            "category":            healthcare_cat,
+            "trust_score":         trust_score,
+            "compliance":          compliance,
+            "geography":           geography,
         },
         "ai_matchmaking": {
-            "algorithm": "Explainable Heuristic Scoring v1.0",
+            "algorithm": "Phase 7 Weighted Healthcare Scoring v2.0",
             "factors": [
-                "Category alignment (40%)",
-                "Trust score threshold (30%)",
-                "Market traction signals (30%)",
+                "Healthcare category alignment (40%)",
+                "Compliance certification overlap (30%)",
+                "Geographic market overlap (20%)",
+                "Trust score credibility (10%)",
             ],
         },
         "recommended_buyers": matches,
-        "total_matches": len(matches),
+        "total_matches":      len(matches),
     }
