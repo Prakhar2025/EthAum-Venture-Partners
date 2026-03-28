@@ -22,12 +22,13 @@ from routers import (
     messages,
     watchlist,
     payments,
+    reports,
 )
 
 app = FastAPI(
     title="EthAum AI",
     description="AI-Powered SaaS Marketplace for Series A-D Startups - Product Hunt + G2 + Gartner + AppSumo",
-    version="2.0.0",
+    version="6.0.0",
 )
 
 # Enable CORS for frontend integration
@@ -108,10 +109,19 @@ app.include_router(
     tags=["Payments & Subscriptions (Phase 5)"],
 )
 
+# ====================================================================
+# PHASE 6 — Investor Reports & Due Diligence
+# ====================================================================
+app.include_router(
+    reports.router,
+    prefix="/api/v1/reports",
+    tags=["Investor Reports & Due Diligence (Phase 6)"],
+)
+
 
 @app.get("/", tags=["Health"])
 def health_check() -> dict:
     """Health check endpoint."""
-    return {"status": "ok", "service": "ethaum-ai", "version": "5.0.0"}
+    return {"status": "ok", "service": "ethaum-ai", "version": "6.0.0"}
 
 
